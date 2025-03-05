@@ -1,291 +1,238 @@
-import React, { useState, useRef } from "react";
-import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, Pressable } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { Link } from "expo-router";
-import { KeyboardAvoidingView } from "react-native";
-import {
-  View,
-  Text,
-  Pressable,
-  TextInput,
-  FlatList,
-  Platform,
-} from "react-native";
-import { FloatingLabelInput } from "react-native-floating-label-input";
-import { allCountries } from "country-telephone-data";
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
+import { allCountries } from "country-telephone-data";
+import UsernameScreen from "./UsernameScreen";
+import { View, Text } from "react-native";
+import OtpScreen from "./OtpScreen";
+import Password from "./Password";
+import { router } from "expo-router";
 
 const SignUp = () => {
-  const [mailOrphone, setMailOrphone] = useState("");
+  const [step, setStep] = useState(1);
   const [username, setUsername] = useState("");
+  const [mailOrphone, setMailOrphone] = useState("");
   const [mobile, setMobile] = useState(false);
-  const [selectedCode, setSelectedCode] = useState("+91"); // Default to India
+  const [selectedCode, setSelectedCode] = useState("+91");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpass, setConfirmPass] = useState("");
+  let api_Data;
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const toast = useToast();
-  const router = useRouter();
 
   const cleanCountryName = (name) => name.replace(/\s*\(.*?\)/g, "").trim();
 
-  // When mapping country data
   const filteredCountries = allCountries
     .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
     .map((c) => ({
-      name: cleanCountryName(c.name), // Cleans localized names
+      name: cleanCountryName(c.name),
       dialCode: c.dialCode,
       iso2: c.iso2,
     }));
 
-    
+  const getSignupUrl = (step) => {
+    if (step === 2) {
+      return "http://192.168.1.11:4000/signup/otpcheck";
+    } else if (step === 3) {
+      return "http://192.168.1.11:4000/signup/register";
+    } else if (step === 4) {
+      return "http://192.168.1.11:4000/signup/resendotp";
+    }
+    return "http://192.168.1.5:5000/signup"; // Default case when no step matches
+  };
+
+  console.log(step);
+  switch (true) {
+    case step === 1:
+      api_Data = { mailOrphone, username };
+      break;
+
+    case step === 2:
+      api_Data = { mailOrphone, otp: otp.join("") };
+      break;
+
+    case step === 3:
+      api_Data = { mailOrphone, password, confirmpass };
+      break;
+
+    case step === 4:
+      api_Data = { mailOrphone };
+      break;
+
+    default:
+      console.log("Invalid step");
+  }
 
   const formSubmit = async () => {
-    if (!username || !mailOrphone) {
-      toast.show("please fill all fields", {
-        type: "danger",
-        duration: 2000,
-        placement: "top",
-      });
+    console.log("Form submission started");
+
+    // Validate form fields based on the step
+    if (
+      step === 1
+        ? !username || !mailOrphone
+        : step === 3
+        ? !password || !confirmpass
+        : step === 2
+        ? !otp || !mailOrphone
+        : ""
+    ) {
+      console.log(step);
+      toast.show("Please fill all fields", { type: "danger" });
       return;
     }
+    console.log(step);
 
     try {
-      // Using the URI variable
-      const response = await axios.post(
-        `http://192.168.1.11:4000/signup`,
-        {
-          username,
-          mailOrphone,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      // Dynamically generate the signup URL
+
+      const response = await axios.post(getSignupUrl(step), api_Data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("Response received:", response);
+
+      if (response && response.status === 200) {
+        if (step == 2) {
+          toast.show("OTP verified successfully!", { type: "success" });
         }
-      );
-      if (response.status === 200) {
-        router.push({
-          pathname: "/(components)/OtpScreen",
-          query: { mailOrphone: mailOrphone },
-        });
+        if (step == 3) {
+          setUsername("");
+          setMailOrphone("");
+          setOtp("");
+          setPassword("");
+          setConfirmPass("");
+          toast.show("Registration successfully!", { type: "success" });
+        }
+        if (step !== (3 || 4)) {
+          setStep((prevStep) => prevStep + 1);
+        }
+        if (step === 4) {
+          setStep(2);
+        }
       }
     } catch (error) {
-      console.log(error)
-      toast.show(`${error.response.data?.message}`, {
-        type: "warning",
-        duration: 2000,
-        placement: "top",
-      });
+      console.error("Error during form submission:", error);
+
+      // Handle specific error scenarios
+      if (error.response?.status === 401) {
+        toast.show("Invalid OTP. Please try again.", { type: "warning" });
+      } else if (error.response?.status === 500) {
+        toast.show("Server error. Please try again later.", { type: "danger" });
+      } else {
+        toast.show(
+          error.response?.data?.message || "An unexpected error occurred.",
+          { type: "danger" }
+        );
+      }
     }
   };
 
-  const mutation = useMutation({
-    mutationfn: formSubmit,
-    onSuccess: (data) => {
-      console.log("Form submitted successfully:", data);
-      toast.show("OTP verified successfully!", { type: "success" });
-      router.push("/Homepage");
-    },
-    onError: (error) => {
-      console.error("Error submitting form:", error);
-      toast.show("Failed to verify OTP!", { type: "danger" });
-    },
-  });
+  if (step === 4) {
+    formSubmit(mailOrphone);
+    setStep(2);
+  }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-gray-200 justify-center items-center"
-    >
-      <View className="h-screen w-screen justify-center align-items-center bg-gray-200">
+    
+      <View className="h-screen w-screen justify-center align-items-center bg-gray-200 bg-blue-300">
         <View
-          className={`bg-white  ${
+          className={`bg-white ${
             Platform.OS === "web"
               ? "w-[50%] flex flex-row"
               : "w-[90%] flex flex-col gap-6 "
           } mx-auto shadow-[5] rounded-md`}
         >
           {Platform.OS === "web" && (
-            <View className="bg-teal-600 w-[40%] p-5 rounded-tl-md rounded-bl-md text-white">
-              <Text className="text-2xl font-bold mt-5 ml-3 text-white shadow-md p-5 ">
-                SignUp
-                <Text className="mt-4 text-base font-medium ml-3 leading-6">
-                  <br></br>
-                  Get access to your{" "}
-                  <span className="font-semibold">Orders</span>,{" "}
-                  <span className="font-semibold">Wishlist</span>, and{" "}
-                  <span className="font-semibold">Recommendations</span>.
+            <View
+              className={`bg-teal-600 w-[40%] ${
+                step === 1 ? "h-[415px]" : "h-[415px]"
+              } p-5 rounded-tl-md rounded-bl-md text-white`}
+            >
+              <View className="shadow-md  p-5 ">
+                <Text className="text-2xl font-bold mt-5 ml-3 text-white  ">
+                  SignUp
                 </Text>
-              </Text>
+                <Text className="mt-8 text-base font-medium ml-3 leading-6 text-white">
+                  Get access to your{" "}
+                  <Text className="font-semibold mt-8  text-white">
+                    Orders,
+                  </Text>{" "}
+                  <Text className="font-semibold  text-white">
+                    Wishlist, and
+                  </Text>{" "}
+                  <Text className="font-semibold  text-white">
+                    Recommendations.
+                  </Text>
+                </Text>
+                {/* <View className="bg-white justify-center align-items-center shadow-sm rounded-sm mt-4">
+                  <Text className="mx-auto text-TealGreen p-2 mt-4">
+                    Already have an account?{" "}
+                    <span className="underline rounded-md text-red-500">
+                      Login
+                    </span>
+                  </Text>
+                </View> */}
+              </View>
+              <Pressable
+              onPress={()=>{
+                router.push('/Login')
+              }}
+                className="w-[90%] flex justify-center items-center p-2 "
+                style={{
+                  position: "absolute",
+                  bottom: 16,
+                }}
+              >
+                <Text className="text-white font-semibold">
+                  Already have an account?{" "}
+                  <span className="underline rounded-md text-white">Login</span>
+                </Text>
+              </Pressable>
             </View>
           )}
-          <View
-            className={`${
-              Platform.OS === "web" ? "w-[60%]" : "w-full mx-auto"
-            }   p-5 py-8 `}
-          >
-            <Text className="text-2xl font-bold mx-auto text-TealGreen mb-10">
-              Create Your Account
-            </Text>
-            {/* Username Input */}
-            <View
-              className={`bg-white h-[50] ${
-                Platform.OS === "web" ? "w-[75%]" : "w-[90%]"
-              }  mx-auto`}
-            >
-              <FloatingLabelInput
-                label="Username"
-                value={username}
-                staticLabel
-                hintTextColor={"#aaa"}
-                containerStyles={{
-                  borderWidth: 2,
-                  paddingHorizontal: 10,
-                  backgroundColor: "#fff",
-                  borderColor: "#2095A2",
-                  borderRadius: 8,
-                }}
-                customLabelStyles={{
-                  leftFocused: 10,
-                  colorFocused: "#5C6670",
-                  fontSizeFocused: 16,
-                }}
-                labelStyles={{
-                  backgroundColor: "#fff",
-                  paddingHorizontal: 5,
-                }}
-                inputStyles={{
-                  borderWidth: 0,
-                  outline: "none",
-                  color: "#5C6670",
-                  paddingHorizontal: 10,
-                }}
-                onChangeText={setUsername}
-              />
-            </View>
-            {mobile ? (
-              <View
-                className={`border-2 border-TealGreen ${
-                  Platform.OS === "web" ? "w-[75%]" : "w-[90%]"
-                } rounded-md mx-auto mt-6`}
-              >
-                <View className="flex-row items-center h-[50] bg-white justify-center align-items-center rounded-md px-3 py-2">
-                  <Pressable
-                    className="p-2 min-h-[40px] my-auto mt-1"
-                    onPress={() => setDropdownVisible(!dropdownVisible)}
-                  >
-                    <Text className="font-bold text-gray-500">
-                      {selectedCode} ▼
-                    </Text>
-                  </Pressable>
-                  <TextInput
-                    className="bg-white flex-1 text-gray-700 text-md px-3 py-2"
-                    placeholder="Enter phone number"
-                    keyboardType="phone-pad"
-                    value={phoneNumber}
-                    onChangeText={setPhoneNumber}
-                  />
-                </View>
-
-                {/* Dropdown Country List */}
-                {dropdownVisible && (
-                  <View className="border border-teal-500 bg-white mt-2 rounded-md max-h-[250px] top-[50] right-0 left-0 absolute  overflow-hidden shadow-lg z-50">
-                    <TextInput
-                      className="border-b border-teal-500 p-3"
-                      placeholder="Search country..."
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}
-                    />
-                    <FlatList
-                      data={filteredCountries}
-                      keyExtractor={(item) => item.iso2}
-                      renderItem={({ item }) => (
-                        <Pressable
-                          className="p-3"
-                          onPress={() => {
-                            setSelectedCode(`+${item.dialCode}`);
-                            setDropdownVisible(false);
-                          }}
-                        >
-                          <Text className="text-[16px] text-gray-600">
-                            {item.name} ({item.dialCode})
-                          </Text>
-                        </Pressable>
-                      )}
-                    />
-                  </View>
-                )}
-              </View>
-            ) : (
-              <View
-                className={`bg-white h-[50] ${
-                  Platform.OS === "web" ? "w-[75%]" : "w-[90%]"
-                }    mx-auto mt-6`}
-              >
-                <FloatingLabelInput
-                  label={mobile ? "Mobile" : "Email"}
-                  value={mailOrphone.toLowerCase()}
-                  staticLabel
-                  hintTextColor={"#aaa"}
-                  containerStyles={{
-                    borderWidth: 2,
-                    paddingHorizontal: 10,
-                    backgroundColor: "#fff",
-                    borderColor: "#2095A2",
-                    borderRadius: 8,
-                  }}
-                  customLabelStyles={{
-                    leftFocused: 10,
-                    colorFocused: "#5C6670",
-                    fontSizeFocused: 12,
-                  }}
-                  labelStyles={{
-                    backgroundColor: "#fff",
-                    paddingHorizontal: 5,
-                  }}
-                  inputStyles={{
-                    outline: "none",
-                    color: "#5C6670",
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                  }}
-                  onChangeText={setMailOrphone}
-                />
-              </View>
-            )}
-
-            {/* Mobile or Email Input */}
-
-            <View
-              className={` ${
-                Platform.OS === "web" ? "w-[75%]" : "w-[90%]"
-              } mx-auto align-items-right mt-2 `}
-            >
-              <Text
-                className="text-blue-500 text-md font-bold text-right mt-2 mr-2 underline"
-                onPress={() => setMobile(!mobile)}
-              >
-                {mobile ? "e-mail" : "Mobile Number"}
-              </Text>
-            </View>
-            {/* Submit Button */}
-            <Pressable
-              onPress={formSubmit}
-              className="bg-TealGreen mb-8 py-4 px-4  h-max mt-10 w-24 mx-auto rounded-md"
-            >
-              <Text className="text-white  m-auto">Next</Text>
-            </Pressable>
-            <Text className=" text-red-500 text-center">
-              Already have an account?{" "}
-              <Link href={"/Login"}>
-                <Text className="underline">Log In</Text>
-              </Link>
-            </Text>
-          </View>
+          {step === 1 && (
+            <UsernameScreen
+              username={username}
+              setUsername={setUsername}
+              mailOrphone={mailOrphone}
+              setMailOrphone={setMailOrphone}
+              mobile={mobile}
+              setMobile={setMobile}
+              selectedCode={selectedCode}
+              setSelectedCode={setSelectedCode}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              dropdownVisible={dropdownVisible}
+              setDropdownVisible={setDropdownVisible}
+              filteredCountries={filteredCountries}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              formSubmit={formSubmit}
+            />
+          )}
+          {step === 2 && (
+            <OtpScreen
+              otp={otp}
+              setOtp={setOtp}
+              formSubmit={formSubmit}
+              setStep={setStep}
+            />
+          )}
+          {step === 3 && (
+            <Password
+              password={password}
+              confirmpass={confirmpass}
+              setPassword={setPassword}
+              setConfirmPass={setConfirmPass}
+              formSubmit={formSubmit}
+              mailOrphone={mailOrphone}
+            />
+          )}
         </View>
       </View>
-    </KeyboardAvoidingView>
   );
 };
 
