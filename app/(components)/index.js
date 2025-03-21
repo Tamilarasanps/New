@@ -1,13 +1,18 @@
 import React from "react";
 import "../../global.css"; // Ensure correct path or remove if unnecessary
-import Sell from "./Client/Sell";
-import CategoryManager from "./Admin/CategoryManager";
+import Layout from "../Layout";
+import LogIn from "./common/LogIn/LogIn";
+import SignUp from "./common/SignIn/SignUp";
+import HomePage from "./Client/(frontPage)/HomePage";
+import CategoryManager from "../(components)/Admin/CategoryManager";
+import { LoadingProvider } from "../context/LoadingContext";
 
-const Layout = () => {
-
+const index = () => {
   return (
-    <Sell/>
+    <LoadingProvider>
+      <HomePage />
+    </LoadingProvider>
   );
 };
 
-export default Layout;
+export default index;
