@@ -8,19 +8,26 @@ import {
   Image,
   TextInput,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Video } from "expo-av";
 import axios from "axios";
 import Toast from "react-native-toast-message";
+import React from "react";
+import Mobile from "../../common/SignIn/Mobile";
+import { allCountries } from "country-telephone-data";
+import useApi from "@/app/hooks/useApi";
 
 export default function Sell() {
   const [value, setValue] = useState("");
   const [subcato, setSubcato] = useState("");
   const [machineMake, setMachineMake] = useState("");
+  const [selectedCode, setSelectedCode] = useState("+91");
+  const [searchQuery, setSearchQuery] = useState("");
   const [radio, setRadiobtn] = useState("");
   // const [phone, setPhone] = useState("");
   // const [email, setEmail] = useState("");
@@ -30,26 +37,24 @@ export default function Sell() {
   const [selectedVideo, setSelectedVideo] = useState([]);
   const [negotiable, setNegotiable] = useState(false);
   const [description, setDescription] = useState("");
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [industries, setIndustries] = useState([]);
+  const [industry, setIndustry] = useState("");
+  const [location, setLocation] = useState(["", ""]);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const { width } = useWindowDimensions();
+  const { getJsonApi } = useApi();
 
-  const data = [
-    { label: "Machine category 1", value: "1" },
-    { label: "Machine category 2", value: "2" },
-    { label: "Machine category 3", value: "3" },
-  ];
-  const subcategory = [
-    { label: "Sub Category 1", value: "1" },
-    { label: "Sub Category 2", value: "2" },
-    { label: "Sub Category 3", value: "3" },
-  ];
-  const make = [
-    { label: "Machine Make 1", value: "1" },
-    { label: "Machine Make 2", value: "2" },
-    { label: "Machine Make 3", value: "3" },
-  ];
-  const radiobtn = [
-    { id: "1", label: "Running", value: "1" },
-    { id: "2", label: "Dismantled", value: "2" },
-  ];
+  const cleanCountryName = (name) => name.replace(/\s*\(.*?\)/g, "").trim();
+
+  const filteredCountries = allCountries
+    .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .map((c) => ({
+      name: cleanCountryName(c.name),
+      dialCode: c.dialCode,
+      iso2: c.iso2,
+    }));
+
 
   const pickMedia = async (type) => {
     if (Platform.OS === "android" && Platform.Version < 29) {
@@ -98,11 +103,7 @@ export default function Sell() {
               topOffset: 0,
             });
           } else {
-            validFiles.push({
-              uri: file.uri,
-              name: file.fileName || `image_${Date.now()}.jpg`,
-              type: file.mimeType || "image/jpeg",
-            });
+            validFiles.push(file);
           }
         });
 
@@ -132,9 +133,6 @@ export default function Sell() {
     }
   };
 
-  selectedImage.forEach((img) => {
-    if (img.file) console.log(true);
-  });
   const deleteImg = (index) => {
     const newImg = selectedImage.filter((_, i) => i !== index);
     setSelectedImage(newImg);
@@ -144,108 +142,51 @@ export default function Sell() {
     const newVid = selectedVideo.filter((_, i) => i !== index);
     setSelectedVideo(newVid);
   };
-
-  const sentData = async () => {
-    if (
-      !value ||
-      !subcato ||
-      !machineMake ||
-      !price ||
-      !description ||
-      !radiobtn
-    ) {
-      Toast.show({
-        type: "error",
-        text1: "Missing Fields",
-        text2: "Please fill all required fields before submitting.",
-        position: "top",
-        topOffset: 0,
-      });
-      return;
-    }
-
-    if (
-      (!selectedImage || selectedImage.length === 0) &&
-      (!selectedVideo || selectedVideo.length === 0)
-    ) {
-      Toast.show({
-        type: "error",
-        text1: "No Media Selected",
-        text2: "Please upload at least one image or video.",
-        position: "top",
-        topOffset: 0,
-      });
-      return;
-    }
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        try {
+          const data = await getJsonApi(`CategoryPage`);
+          setIndustries(data);
+        } catch (error) {
+          console.error(error);
+        }
+      } catch (err) {}
+    };
+    fetchIndustries();
+  }, []);
+  const sentData = async (e) => {
+    e.preventDefault();
 
     const formData = new FormData();
     formData.append("industry", value);
     formData.append("category", subcato);
     formData.append("make", machineMake);
     formData.append("price", price);
-    formData.append("negotiable", negotiable ? "true" : "false");
+    formData.append("negotiable", negotiable);
     formData.append("description", description);
 
-    selectedImage?.forEach((img) => {
-      if (img?.file) {
-        formData.append("images", img.file);
-      }
+    // Append all images
+    selectedImage.forEach((image) => {
+      formData.append("images", image.file);
     });
 
-    selectedVideo?.forEach((vid) => {
-      if (vid?.file) {
-        formData.append("videos", vid.file);
-      }
+    // Append all videos
+    selectedVideo.forEach((video, index) => {
+      formData.append("videos", video.file);
     });
 
     try {
       const response = await axios.post(
-        "http://192.168.1.5:5000/productupload",
+        "http://192.168.162.158:5000/productupload",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
-
-      console.log(response.status, "uploaded successfully data");
-
-      if (response.status === 201 || response.status === 200) {
-        // Reset all states
-
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: response.data.message || "Data uploaded successfully!",
-          position: "top",
-          topOffset: 0,
-        });
-        setTimeout(() => {
-          setValue("");
-          setSubcato("");
-          setMachineMake("");
-          setPrice("");
-          setNegotiable(false);
-          setDescription("");
-          setSelectedImage([]);
-          setRadiobtn("");
-          setSelectedVideo([]);
-        }, 1000);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Upload Failed",
-          text2: "Something went wrong. Please try again.",
-          position: "top",
-          topOffset: 0,
-        });
-      }
+      console.log(response);
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Failed to send data. Please check your connection.",
-        position: "top",
-        topOffset: 0,
-      });
-      console.log("Error in sending data:", error.response.data.message);
+      console.error("Error uploading data:", error.response);
     }
   };
 
@@ -261,7 +202,11 @@ export default function Sell() {
       >
         <ScrollView
           className={`bg-white z-10 py-8 rounded-lg shadow-lg mx-auto mt-8 ${
-            Platform.OS === "web" ? "max-w-2xl px-24" : "max-w-[100%] px-8"
+            Platform.OS === "web"
+              ? width < 1024
+                ? "max-w-[90%] min-w-[90%] px-8"
+                : "max-w-2xl px-24"
+              : "max-w-[90%] min-w-[90%] px-8"
           } mb-8`}
         >
           {/* <View className="w-[80%] mx-auto"> */}
@@ -356,22 +301,14 @@ export default function Sell() {
           <Text className="text-lg font-semibold text-teal-600 mt-6">
             Industry
           </Text>
-          <Dropdown
-            style={{
-              height: 50,
-              width: Platform.OS === "web" ? "100%" : "100%",
-              marginTop: 10,
-              borderColor: "gray",
-              borderWidth: 1,
-              borderRadius: 5,
-              padding: 10,
-            }}
-            data={data}
+          <TextInput
+            className="border outline-teal-600 rounded-lg h-12 w-full mt-4 p-3 text-gray-500  focus:border-teal-600"
+            // data={data}
             labelField="label"
             valueField="value"
             placeholder="Select Industry"
-            value={value}
-            onChange={(item) => setValue(item.value)}
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
           />
           <Text className="text-lg font-semibold text-teal-600 mt-6">
             Category
@@ -386,7 +323,7 @@ export default function Sell() {
               borderRadius: 5,
               padding: 10,
             }}
-            data={subcategory}
+            // data={subcategory}
             labelField="label"
             valueField="value"
             placeholder="Select Industry"
@@ -404,7 +341,7 @@ export default function Sell() {
               borderRadius: 5,
               padding: 10,
             }}
-            data={make}
+            // data={make}
             labelField="label"
             valueField="value"
             placeholder="Select Industry"
@@ -418,10 +355,10 @@ export default function Sell() {
             Condition:
           </Text>
           <View className="flex flex-row gap-10 mt-4">
-            {radiobtn.map((item) => (
+            {["Negotiable","Fixed"].map((item) => (
               <Pressable
                 key={item.id}
-                onPress={() => setRadiobtn(item.value)}
+                onPress={() => setRadiobtn(item)}
                 className={`px-4 py-2 rounded-sm ${
                   radio === item.value
                     ? "bg-teal-600"
@@ -430,10 +367,10 @@ export default function Sell() {
               >
                 <Text
                   className={`text-sm ${
-                    radio === item.value ? "text-white" : "text-gray-600"
+                    radio === item ? "text-white" : "text-gray-600"
                   }`}
                 >
-                  {item.label}
+                  {item}
                 </Text>
               </Pressable>
             ))}
@@ -445,71 +382,43 @@ export default function Sell() {
           </Text>
           <View className="flex flex-row items-center mt-4">
             <TextInput
-              className="border border-gray-300 rounded-lg w-[50%] p-3  outline-teal-600"
+              className="border border-gray-300 rounded-lg w-[50%] p-3 focus:border-teal-600 outline-teal-600"
               placeholder="Enter price"
               keyboardType="numeric"
               value={price}
               onChangeText={(item) => setPrice(item)}
             />
-            <View className="flex flex-row items-center ml-4">
-              <Pressable
-                onPress={() => setNegotiable(!negotiable)}
-                className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center ${
-                  negotiable
-                    ? "bg-yellow-400 border-yellow-400"
-                    : "border-gray-400"
-                }`}
-              >
-                {negotiable && (
-                  <Text className="text-white font-bold text-xs md:text-sm leading-none">
-                    ✔
-                  </Text>
-                )}
-              </Pressable>
-              <Text className="ml-2 text-gray-600">Negotiable</Text>
-            </View>
           </View>
-
-          {/* Location Section with Suggestions */}
-          {/* <Text className="text-lg font-semibold text-teal-600 mt-6">
-            Location:
+          <Text className="text-lg font-semibold text-teal-600 mt-6">
+            Price Type:
           </Text>
-          <View className="relative mt-4">
-            <TextInput
-              className="border border-gray-300 rounded-lg w-full p-3"
-              placeholder="Type to search location"
-              value={location}
-              onChangeText={(text) => {
-                setLocation(text);
-                fetchSuggestions(text); // Function to fetch location suggestions
-              }}
-            />
-            {locationSuggestions.length > 0 && (
-              <View className="absolute top-12 left-0 right-0 bg-white shadow-lg rounded-lg z-10">
-                {locationSuggestions.map((suggestion, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => {
-                      setLocation(suggestion);
-                      setLocationSuggestions([]); // Clear suggestions after selection
-                    }}
-                    className="p-2 border-b border-gray-300 last:border-b-0"
-                  >
-                    <Text>{suggestion}</Text>
-                  </Pressable>
-                ))}
+          <View className="flex flex-row flex-wrap mt-4 gap-8">
+            {["Fixed", "Negotiable"].map((i) => (
+              <View key={i} className="flex flex-row items-center mb-2">
+                <Pressable
+                  onPress={() => setNegotiable(i)}
+                  className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center ${
+                    negotiable === i
+                      ? "bg-yellow-400 border-yellow-400"
+                      : "border-gray-400"
+                  }`}
+                >
+                  {negotiable === i && (
+                    <Text className="text-white font-bold text-xs md:text-sm leading-none">
+                      ✔
+                    </Text>
+                  )}
+                </Pressable>
+                <Text className="ml-2 text-gray-600">{i}</Text>
               </View>
-            )}
-          </View> */}
-
+            ))}
+          </View>
           <Text className="text-lg font-semibold text-teal-600 mt-6">
             Description:
           </Text>
 
           <TextInput
-            className={`border border-gray-300 rounded-lg h-48 ${
-              Platform.OS === "web" ? "w-[100%]" : "w-full"
-            } mt-4 p-3 text-gray-500  outline-teal-600`}
+            className="border border-gray-300 rounded-lg h-48 w-full mt-4 p-3 text-gray-500 focus:border-teal-600"
             placeholder="Type about your product"
             value={description}
             onChangeText={(item) => setDescription(item)}
@@ -518,6 +427,48 @@ export default function Sell() {
               textAlignVertical: "center",
             }}
           />
+
+          <Text className="text-lg font-semibold text-teal-600 mt-6">
+            Mobile
+          </Text>
+
+          <View className="w-full z-50">
+            <Mobile
+              dropdownVisible={dropdownVisible}
+              setDropdownVisible={setDropdownVisible}
+              selectedCode={selectedCode}
+              setSelectedCode={setSelectedCode}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filteredCountries={filteredCountries}
+            />
+          </View>
+          {/* Location Section with Suggestions */}
+          {["State", "country"].map((i, ind) => (
+            <View key={ind}>
+              <Text className="text-lg font-semibold text-teal-600 mt-6">
+                {i}
+              </Text>
+              <View className="relative mt-4">
+                <TextInput
+                  key={i}
+                  className="border border-gray-300 h-[50] rounded-lg w-full p-3  focus:border-teal-600 outline-teal-600"
+                  placeholder={`Enter your  ${i}`}
+                  value={location[ind]}
+                  onChangeText={(text) => {
+                    setLocation((prevLocation) => {
+                      const updated = [...prevLocation]; // Copy the previous array
+                      updated[ind] = text; // Update the specific index
+                      return updated; // Return new state
+                    });
+                  }}
+                />
+              </View>
+            </View>
+          ))}
+
           <Pressable
             onPress={sentData}
             className="bg-teal-600 w-max px-4 py-2 rounded-md mx-auto mt-12 mb-24"
@@ -531,3 +482,70 @@ export default function Sell() {
     </SafeAreaView>
   );
 }
+
+
+// import React, { useState } from 'react';
+// import { View, TextInput, FlatList, Text } from 'react-native';
+
+// const industries = ["Agriculture", "Automotive", "Banking", "Construction", "Education"];
+// const categories = ["Cars", "Trucks", "Motorcycles", "Buses", "Boats"];
+// const makes = ["Toyota", "Ford", "Honda", "BMW", "Tesla"];
+
+// const SearchComponent = ({ data, label, value, onChange }) => {
+//   const filteredData = data.filter(item => item.toLowerCase().includes(value.toLowerCase())).slice(0, 10);
+
+//   return (
+//     <View>
+//       <TextInput
+//         placeholder={`Search ${label}...`}
+//         value={value}
+//         onChangeText={onChange}
+//         style={{ borderWidth: 1, padding: 10, margin: 10, borderRadius: 5 }}
+//       />
+//       <FlatList
+//         data={filteredData}
+//         keyExtractor={(item) => item}
+//         renderItem={({ item }) => <Text style={{ padding: 5 }}>{item}</Text>}
+//       />
+//     </View>
+//   );
+// };
+
+// const Sell = () => {
+//   const [searchValues, setSearchValues] = useState({
+//     industry: "",
+//     category: "",
+//     make: ""
+//   });
+
+//   const handleChange = (key, value) => {
+//     setSearchValues(prev => ({ ...prev, [key]: value }));
+//   };
+
+//   return (
+//     <View>
+//       <SearchComponent
+//         data={industries}
+//         label="Industry"
+//         value={searchValues.industry}
+//         onChange={(value) => handleChange('industry', value)}
+//       />
+      
+//       <SearchComponent
+//         data={categories}
+//         label="Category"
+//         value={searchValues.category}
+//         onChange={(value) => handleChange('category', value)}
+//       />
+      
+//       <SearchComponent
+//         data={makes}
+//         label="Make"
+//         value={searchValues.make}
+//         onChange={(value) => handleChange('make', value)}
+//       />
+//     </View>
+//   );
+// };
+
+// export default Sell;
