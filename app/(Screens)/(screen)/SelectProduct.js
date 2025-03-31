@@ -20,16 +20,19 @@ import useApi from "@/app/hooks/useApi";
 import { useState } from "react";
 import useConversation from "@/app/stateManagement/useConversation";
 import { useRouter } from "expo-router";
+import * as Sharing from "expo-sharing";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SelectProduct() {
   const { width } = useWindowDimensions();
   const isScreen = width > 786;
 
   const { selectedConversation, setSelectedConversation } = useConversation();
-  const router = useRouter()
+  const [wishList, setWishList] = useState([]);
+  const router = useRouter();
 
   const { id } = useLocalSearchParams() || {};
-  const { getJsonApi } = useApi();
+  const { getJsonApi, pathchApi } = useApi();
 
   const [product, setProduct] = useState({});
   let searchTerms;
@@ -41,13 +44,48 @@ export default function SelectProduct() {
   const fetchProduct = async () => {
     try {
       const data = await getJsonApi(`productDetails/${id}`);
-      console.log(data);
       setProduct(data.data[0]);
     } catch (error) {
       console.error(error);
     }
   };
-  console.log(product[0] + "jhbnibib");
+
+  const share = async () => {
+    const productShare = product;
+    if (!productShare) {
+      console.log("Product Not Found");
+      return;
+    }
+    const isSharingAvailable = await Sharing.isAvailableAsync();
+    if (!isSharingAvailable) {
+      console.log("Sharing is not available on this device");
+      return;
+    }
+    try {
+      await Sharing.shareAsync(productShare.url || "no url available", {
+        DialogTitle: `Check out this product: ${productShare.industry}`,
+      });
+    } catch (error) {
+      console.log(error, "error");
+    }
+  };
+  const whislist = async (product) => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const data = await pathchApi(
+        `wishlist/add`,
+        {
+          productId: product._id,
+        },
+        token
+      );
+      console.log("result", data.data);
+      setWishList(() => data.data.favourites);
+    } catch (err) {
+      console.log(err)
+    }
+ 
+  };
   return (
     <ScrollView>
       <View>
@@ -57,12 +95,23 @@ export default function SelectProduct() {
         {/* Responsive Layout */}
         {Object.keys(product).length > 0 ? (
           <>
-            <View className="z-10">
+            <View>
               {/* Star Icon */}
-              <View className="flex flex-row mt-5">
-                <View className="mt-2 absolute right-10">
-                  <FontAwesome name="star" size={30} color="#FFD700" />
-                </View>
+              <View className="flex flex-row mt-5 z-50 relative">
+                <Pressable
+                  className="absolute top-2 right-10 "
+                  onPress={() => whislist(product)}
+                >
+                  <FontAwesome
+                    name="star"
+                    size={30}
+                    color={
+                      wishList?.includes(product._id)
+                        ? "red"
+                        : "white"
+                    }
+                  />
+                </Pressable>
               </View>
 
               {/* Name and Share Icon */}
@@ -74,7 +123,9 @@ export default function SelectProduct() {
                   Tamilarasan
                 </Text>
                 <View className="absolute right-10 mt-12 pt-3">
-                  <FontAwesome name="share" size={30} color="gray" />
+                  <Pressable onPress={share}>
+                    <FontAwesome name="share" size={30} color="gray" />
+                  </Pressable>
                 </View>
               </View>
 
@@ -125,6 +176,17 @@ export default function SelectProduct() {
                     height: Platform.OS === "web" ? "400px" : 300,
                   }}
                 />
+                <View className=" absolute top-2 left-2 p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
+                  <Text className=" text-base font-bold">
+                    {product.priceType || "Negotiable"}
+                  </Text>
+                </View>
+                {/* <Pressable
+                  className="absolute top-2 right-2"
+                  onPress={() => whislist(product)}
+                >
+                  <FontAwesome name="star" size={30} color="white" />
+                </Pressable> */}
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View className=" mt-4 flex flex-row gap-2  z-1">
@@ -156,17 +218,19 @@ export default function SelectProduct() {
                   marginTop: Platform.OS === "web" ? "-40px" : -20,
                 }}
               >
-                <View className="mt-5 bg-gray-100 rounded-sm p-5">
+                <View className="mt-5 bg-white rounded-sm p-5">
                   <View className="bg-gray-100">
                     <View className="flex flex-row">
-                      <Pressable 
-                      onPress={()=>{
-                        setSelectedConversation(product.userId)
-                        router.push("/(Screens)/(chat)/Chat")
-                      }}
-                      className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center">
-                        <Text className="text-white text-lg">Chat</Text>
-                      </Pressable>
+                      <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center">
+                        <Pressable
+                          onPress={() => {
+                            setSelectedConversation(product.userId);
+                            router.push("/(Screens)/(chat)/Chat");
+                          }}
+                        >
+                          <Text className="text-white text-lg">Chat</Text>
+                        </Pressable>
+                      </View>
                       {Platform.OS !== "web" ? (
                         <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center absolute right-6">
                           <Text className="text-white text-lg">Call</Text>
@@ -176,20 +240,27 @@ export default function SelectProduct() {
 
                     <View className="flex flex-row mt-8 ">
                       <View className="mt-4 h-10 ms-5 w-[100px] bg-TealGreen rounded-sm justify-center items-center">
-                        <Text className="text-white text-lg"> ${" "}{product.price}</Text>
+                        <Text className="text-white text-lg">
+                          $ {product.price}
+                        </Text>
                       </View>
 
-                      <View
+                      {/* <View
                         className="mt-4 h-10 ms-5 w-[100px]  rounded-sm justify-center items-center"
                         style={{ backgroundColor: "#FFD700" }}
                       >
                         <Text className=" text-lg">
                           {product.negotiable ? "Negotiable" : "Fixed"}
                         </Text>
+                      </View> */}
+                      <View className=" absolute right-10 mt-4  p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
+                        <Text className=" text-base font-bold">
+                          {product.priceType || "Negotiable"}
+                        </Text>
                       </View>
                     </View>
 
-                    <ProductDetails product = {product}/>
+                    <ProductDetails product={product} />
                   </View>
                 </View>
               </View>
@@ -199,7 +270,6 @@ export default function SelectProduct() {
           ""
         )}
 
-        {/* Footer Only on Web */}
         <Recommeded />
         {Platform.OS === "web" && <Footer />}
       </View>

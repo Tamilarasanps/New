@@ -87,7 +87,7 @@ const ProductApproval = () => {
           product={product}
           onClose={() => setIsModalVisible(false)}
           onApprove={handleApprove}
-          onReject={handleReject}
+          // onReject={handleReject}
           onPrev={handlePrev}
           onNext={handleNext}
           currentIndex={currentIndex}

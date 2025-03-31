@@ -70,7 +70,7 @@ export default function Header() {
 
   return (
     <View
-      className="bg-TealGreen w-full z-10 px-4 py-3"
+      className="bg-TealGreen w-full z-50 px-4 py-3"
       style={{ position: "sticky", top: 0 }}
     >
       <View className="flex flex-row items-center justify-between">
