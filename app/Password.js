@@ -3,7 +3,7 @@ import { View, Text, Pressable, Platform } from "react-native";
 import { FloatingLabelInput } from "react-native-floating-label-input";
 import Icon from "react-native-vector-icons/FontAwesome"; // Assuming you're using react-native-vector-icons
 
-const Password = ({ formSubmit, password, confirmpass, setPassword, setConfirmPass }) => {
+const Password = ({ formSubmit, password, confirmpass, setPassword, setConfirmPass, buttonLabel }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
@@ -128,7 +128,7 @@ const Password = ({ formSubmit, password, confirmpass, setPassword, setConfirmPa
             : "opacity-[50%] cursor-not-allowed"
         }`}
       >
-        <Text className="text-white m-auto">Register</Text>
+        <Text className="text-white m-auto">{buttonLabel}</Text>
       </Pressable>
     </View>
   );

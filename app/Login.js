@@ -7,6 +7,9 @@ import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
 import Mobile from "./Mobile";
 import Email from "./Email";
+import useApi from "./hooks/useApi";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({}) => {
   const [mailOrphone, setMailOrphone] = useState("");
@@ -17,6 +20,9 @@ const Login = ({}) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const { postJsonApi } = useApi();
+  const router = useRouter();
   const toast = useToast();
 
   //cleaning country name
@@ -39,34 +45,38 @@ const Login = ({}) => {
 
     //null check
     if (!mailOrphone || !password) {
-      toast.show("Please fill all fields", { type: "warning" });
+      // toast.show("Please fill all fields", { type: "warning" });
       return;
     }
 
     try {
       // Dynamically generate the signup URL
 
-      const response = await axios.post(
-        "http://192.168.1.11:4000/login",
-        {
-          mailOrphone,
-          password,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log("Response received:", response);
-
+      const response = await postJsonApi(`login`, {
+        mailOrphone,
+        password,
+      });
       if (response && response.status === 200) {
-        toast.show(response.message || "Logged In successfully!", { type: "success" });
+        await AsyncStorage.setItem("userToken", response.data.token);
+        router.back();
       }
+
+      // axios.post(
+      //   "http://192.168.1.11:5000/login",
+      //   {
+      //     mailOrphone,
+      //     password,
+      //   },
+      //   {
+      //     headers: { "Content-Type": "application/json" },
+      //   }
+      // );
     } catch (error) {
       console.error("Error during form submission:", error);
-      toast.show(
-        error.response?.data?.message || "An unexpected error occurred.",
-        { type: "danger" }
-      );
+      // toast.show(
+      //   error.response?.data?.message || "An unexpected error occurred.",
+      //   { type: "danger" }
+      // );
     }
   };
 
@@ -100,7 +110,7 @@ const Login = ({}) => {
             </View>
             <Pressable
               onPress={() => {
-                router.push("/Login");
+                router.push("/SignUp");
               }}
               className="w-[90%] flex justify-center items-center p-2 "
               style={{
