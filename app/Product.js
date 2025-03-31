@@ -13,7 +13,7 @@ const Product = ({ products, setIsModalVisible, setCurrentIndex, status }) => {
       {products.length > 0 &&
         products.map(
           (product, index) =>
-            product.adminApproval === status ? ( 
+            product?.adminApproval === status ? ( 
               <Pressable
                 key={index}
                 className="mb-4"

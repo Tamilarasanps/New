@@ -4,7 +4,7 @@ import HomePage from "./(Screens)/(frontPage)/HomePage";
 import ProductApproval from "./(Admin)/ProductApproval";
 
 const index = () => {
-  return <ProductApproval />;
+  return <HomePage />;
 };
 
 export default index;
