@@ -13,12 +13,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Mobile from "@/app/Mobile";
 import { allCountries } from "country-telephone-data";
 import Password from "../(SignIn)/Password";
 
 export default function Profile() {
   const [userProfile, setUserProfile] = useState(null);
+  const [userProfileImage, setUserProfileImage] = useState(null);
   const [updateInput, setUpdateInput] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -63,7 +65,28 @@ export default function Profile() {
     });
 
     if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      // const updateProfileImage = async () => {
+      try {
+        // const response = await axios.get("http://192.168.1.6:5000/signup");
+        const token = await AsyncStorage.getItem("userToken");
+        const formdata = new FormData();
+        console.log(result);
+        result.assets.forEach((asset) => {
+          formdata.append("images", asset.file);
+        });
+
+        const response = await postJsonApi(
+          `profile/updateProfileImage`,
+          formdata,
+          token
+        );
+        setUserProfileImage(result.assets[0].uri);
+
+        // setUserProfile(response.data);
+      } catch (error) {
+        console.error(error.message, "error");
+      }
+      // };
     }
   };
 
@@ -73,11 +96,17 @@ export default function Profile() {
       try {
         // const response = await axios.get("http://192.168.1.6:5000/signup");
         const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          router.push("/Login");
+        }
         const response = await getJsonApi(`profile`, token);
         setUserProfile(response.data);
         setPhoneNumber(response.data.mobile);
         setEmail(response.data.email);
         setUsername(response.data.username);
+        setUserProfileImage(
+          `data:image/png;base64,${response.data.profileImage?.[0]?.machineImages}`
+        );
       } catch (error) {
         console.error(error.message, "error");
       }
@@ -92,6 +121,7 @@ export default function Profile() {
     try {
       // const response = await axios.get("http://192.168.1.6:5000/signup");
       const token = await AsyncStorage.getItem("userToken");
+
       const response = await postJsonApi(
         `profile/update`,
         {
@@ -107,20 +137,15 @@ export default function Profile() {
     }
   };
   const passwordReset = async () => {
-    if (password !== confirmpass)
-      alert("password should not match");
+    if (password !== confirmpass) alert("password should not match");
     try {
-      console.log(password)
       // const response = await axios.get("http://192.168.1.6:5000/signup");
       const token = await AsyncStorage.getItem("userToken");
-      console.log(typeof(password))
-      console.log(token)
       const response = await postJsonApi(
         `profile/passwordReset`,
-        {password:password},
+        { password: password },
         token
       );
-      console.log(response);
     } catch (error) {
       console.error(error.message, "error");
     }
@@ -128,7 +153,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("usertoken");
+      await AsyncStorage.removeItem("userToken");
       console.log("Logged out successfully");
       //   alert("You have been logged out");
       // Use navigation.replace to go to the Login screen
@@ -138,99 +163,104 @@ export default function Profile() {
       alert("Failed to logout. Please try again.");
     }
   };
-
   return (
     <ScrollView>
-      <View>
+      <View className="bg-red-100">
         <Header />
         <All />
 
         {/* Profile Picture Section */}
-        <View className="flex-1 items-center h-[500px]" style={{ zIndex: -1 }}>
-          <View className="items-center mt-10" style={{ position: "relative" }}>
-            <Pressable onPress={selectImage}>
-              <View
-                className="bg-TealGreen items-center justify-center"
-                style={{
-                  width: 200,
-                  height: 200,
-                  borderRadius: 100,
-                  overflow: "hidden", // Ensures circular shape
-                }}
-              >
-                {userProfile ? (
-                  <></>
-                ) : (
-                  // <Image
-                  //   source={{ uri: profileImage }}
-                  //   style={{ width: "100%", height: "100%" }}
-                  // />
-                  <FontAwesome name="user" size={100} color="white" />
-                )}
-              </View>
+      </View>
+      <View className="flex-1 items-center h-[500px]" style={{ zIndex: -1 }}>
+        <View className="items-center mt-10" style={{ position: "relative" }}>
+          <View
+            className="bg-TealGreen items-center justify-center"
+            style={{
+              width: 200,
+              height: 200,
+              borderRadius: 100,
+              overflow: "hidden", // Ensures circular shape
+            }}
+          >
+            <View
+              className="justify-center items-center"
+              style={{ width: "100%", height: "100%" }}
+            >
+              {userProfileImage ? (
+                <Image
+                source={{ uri: userProfileImage }}
+                className="w-full h-full rounded-full"
+               
+              />
+              
+              ) : (
+                <FontAwesome name="user" size={100} color="white" />
+              )}
+            </View>
+          </View>
 
-              {/* Edit Icon */}
-              <View
-                className="bg-white items-center justify-center"
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 50,
-                  position: "absolute",
-                  bottom: 10,
-                  right: 10,
-                  elevation: 5, // Shadow effect for better visibility
-                }}
-              >
-                {/* <Image source={require("../../../assets/machine/Edit.png")} /> */}
-              </View>
+          {/* Edit Icon */}
+          <View
+            className="bg-white items-center justify-center"
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 50,
+              position: "absolute",
+              bottom: 10,
+              right: 10,
+              elevation: 5, // Shadow effect for better visibility
+            }}
+          >
+            <Pressable onPress={selectImage}>
+              <MaterialIcons name="edit" size={24} color="teal" />
             </Pressable>
           </View>
         </View>
+      </View>
 
-        {/* User Details */}
-        <View className="items-center justify-center mt-14">
-          <Text className="text-TealGreen font-bold text-2xl">
-            {userProfile?.username}
+      {/* User Details */}
+      <View className="items-center justify-center mt-6 mb-10">
+        <Text className="text-TealGreen font-bold text-2xl">
+          {userProfile?.username}
+        </Text>
+      </View>
+
+      {/* Contact Info */}
+      <View className="items-center mt-6">
+        <View className="flex flex-row items-center gap-2 w-[300px] justify-center">
+          <Icon name="phone-volume" size={20} color="teal" />
+          <Text className="font-bold text-lg text-TealGreen flex-1 text-center ">
+            {userProfile?.mobile || "Update your mobile"}
           </Text>
         </View>
+        <View className="w-[300px] h-1 bg-TealGreen mt-3"></View>
+      </View>
 
-        {/* Contact Info */}
-        <View className="items-center mt-6">
-          <View className="flex flex-row items-center gap-2 w-[300px] justify-center">
-            <Icon name="phone-volume" size={20} color="teal" />
-            <Text className="font-bold text-lg text-TealGreen flex-1 text-center ">
-              {userProfile?.mobile || "Update your mobile"}
-            </Text>
-          </View>
-          <View className="w-[300px] h-1 bg-TealGreen mt-3"></View>
+      <View className="items-center mt-6">
+        <View className="flex flex-row items-center gap-2 w-[300px] justify-center">
+          <MaterialCommunityIcons name="email" size={24} color="teal" />
+          <Text className="font-bold text-lg text-TealGreen flex-1 text-center ">
+            {userProfile?.email || "Update your email"}
+          </Text>
         </View>
+        <View className="w-[300px] h-1 bg-TealGreen mt-3"></View>
+      </View>
 
-        <View className="items-center mt-6">
-          <View className="flex flex-row items-center gap-2 w-[300px] justify-center">
-            <MaterialCommunityIcons name="email" size={24} color="teal" />
-            <Text className="font-bold text-lg text-TealGreen flex-1 text-center ">
-              {userProfile?.email || "Update your email"}
-            </Text>
-          </View>
-          <View className="w-[300px] h-1 bg-TealGreen mt-3"></View>
-        </View>
-
-        {/* Buttons */}
-        <View className="flex flex-row justify-center gap-10 mt-5">
-          <Pressable
-            className="bg-TealGreen h-10 w-[100] items-center justify-center rounded-sm"
-            onPress={handleLogout}
-          >
-            <Text className="text-white text-lg font-semibold">Log Out</Text>
-          </Pressable>
-          <Pressable
-            className="bg-TealGreen h-10 w-[100] items-center justify-center rounded-sm"
-            onPress={() => setUpdateInput(true)}
-          >
-            <Text className="text-white text-lg font-semibold">Update</Text>
-          </Pressable>
-        </View>
+      {/* Buttons */}
+      <View className="flex flex-row justify-center gap-10 mt-10">
+        <Pressable
+          className="bg-TealGreen h-10 w-[100] items-center justify-center rounded-sm"
+          onPress={handleLogout}
+        >
+          <Text className="text-white text-lg font-semibold">Log Out</Text>
+        </Pressable>
+        <Pressable
+          className="bg-TealGreen h-10 w-[100] items-center justify-center rounded-sm"
+          onPress={() => setUpdateInput(true)}
+        >
+          <Text className="text-white text-lg font-semibold">Update</Text>
+        </Pressable>
       </View>
 
       {/* Update Input Section */}
@@ -241,16 +271,12 @@ export default function Profile() {
             style={{ marginTop: -500 }}
           >
             {/* Close Button */}
+            {/* Close Button */}
             <Pressable
-              onPress={() => setUpdateInput(false)} // Close the form when pressed
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                zIndex: 10, // Ensure it's above other elements
-              }}
+              onPress={() => setUpdateInput(false)}
+              className="absolute h-10 w-10 justify-center items-center top-2 right-2 bg-gray-200 p-2 rounded-full"
             >
-              <FontAwesome name="close" size={30} color="black" />
+              <Text className="text-lg font-bold text-gray-600">✕</Text>
             </Pressable>
             <View className="items-center">
               <TextInput
@@ -316,39 +342,27 @@ export default function Profile() {
       {resetPass && (
         <View className="items-center justify-center flex">
           <View
-            className="bg-white flex-1 w-[600px] p-5 items-center justify-center"
+            className="bg-white flex-1 w-[600px] p-5 items-center justify-center relative"
             style={{ marginTop: -500 }}
           >
-            {/* <Text className="font-bold text-lg text-TealGreen mb-10">
-              Reset Your Password
-            </Text> */}
-
-            {/* {[
-              { newPassword: newPass.newPassword },
-              { confirmPassword: newPass.confirmPassword },
-            ].map((pass) => {
-              const key = Object.keys(pass)[0]; // Extract key dynamically */}
-            {/* return ( */}
-            <Password
-            password={password}
-            confirmpass={confirmpass}
-            setPassword={setPassword}
-            setConfirmPass={setConfirmPass}
-            formSubmit={passwordReset}
-            buttonLabel = "Reset Password"
-            headerLabel={"Reset Password"}
-            />
-            {/* );
-            })} */}
-
-            {/* <Pressable
-              onPress={() => passwordReset()}
-              className="my-5 bg-TealGreen h-10 items-center justify-center w-[150px] mt-12 rounded-sm"
+            {/* Close Button */}
+            <Pressable
+              onPress={() => setResetPass(false)}
+              className="absolute h-10 w-10 justify-center items-center top-2 right-2 bg-gray-200 p-2 rounded-full"
             >
-              <Text className="text-lg font-bold text-white">
-                Reset Password
-              </Text>
-            </Pressable> */}
+              <Text className="text-lg font-bold text-gray-600">✕</Text>
+            </Pressable>
+
+            {/* Password Reset Form */}
+            <Password
+              password={password}
+              confirmpass={confirmpass}
+              setPassword={setPassword}
+              setConfirmPass={setConfirmPass}
+              formSubmit={passwordReset}
+              buttonLabel="Reset Password"
+              headerLabel="Reset Password"
+            />
           </View>
         </View>
       )}

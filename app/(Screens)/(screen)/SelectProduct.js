@@ -22,13 +22,15 @@ import useConversation from "@/app/stateManagement/useConversation";
 import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useWishlist from "@/app/hooks/useWishlist";
 
 export default function SelectProduct() {
   const { width } = useWindowDimensions();
   const isScreen = width > 786;
 
   const { selectedConversation, setSelectedConversation } = useConversation();
-  const [wishList, setWishList] = useState([]);
+  const { wishlist, addToWishlist } = useWishlist();
+
   const router = useRouter();
 
   const { id } = useLocalSearchParams() || {};
@@ -69,23 +71,7 @@ export default function SelectProduct() {
       console.log(error, "error");
     }
   };
-  const whislist = async (product) => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const data = await pathchApi(
-        `wishlist/add`,
-        {
-          productId: product._id,
-        },
-        token
-      );
-      console.log("result", data.data);
-      setWishList(() => data.data.favourites);
-    } catch (err) {
-      console.log(err)
-    }
- 
-  };
+
   return (
     <ScrollView>
       <View>
@@ -100,16 +86,12 @@ export default function SelectProduct() {
               <View className="flex flex-row mt-5 z-50 relative">
                 <Pressable
                   className="absolute top-2 right-10 "
-                  onPress={() => whislist(product)}
+                  onPress={() => addToWishlist(product)}
                 >
                   <FontAwesome
                     name="star"
                     size={30}
-                    color={
-                      wishList?.includes(product._id)
-                        ? "red"
-                        : "white"
-                    }
+                    color={wishlist?.includes(product._id) ? "red" : "white"}
                   />
                 </Pressable>
               </View>
@@ -151,6 +133,7 @@ export default function SelectProduct() {
             >
               {/* Sticky Image Section */}
               <View
+              className="bg-gray-100"
                 style={{
                   width: isScreen ? "35%" : "90%",
                   marginLeft: isScreen ? 100 : 0,
@@ -158,7 +141,6 @@ export default function SelectProduct() {
                   top: 0,
                   height: isScreen ? "70vh" : "auto",
                   zIndex: 10,
-                  backgroundColor: "white",
                   borderRadius: 10,
                   alignItems: "center",
                 }}
@@ -218,10 +200,10 @@ export default function SelectProduct() {
                   marginTop: Platform.OS === "web" ? "-40px" : -20,
                 }}
               >
-                <View className="mt-5 bg-white rounded-sm p-5">
+                <View className="mt-5 bg-gray-100 rounded-sm p-5">
                   <View className="bg-gray-100">
                     <View className="flex flex-row">
-                      <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center">
+                      <View className="mt-4 h-12 ms-5 mr-auto w-[150px] bg-TealGreen rounded-sm justify-center items-center">
                         <Pressable
                           onPress={() => {
                             setSelectedConversation(product.userId);

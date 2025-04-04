@@ -46,7 +46,7 @@ const ProductApprovalModal = ({
                   Industry: {product.industry}
                 </Text>
                 <Text className="text-base text-gray-700">
-                  Location: {product.location}
+                  {/* Location: {product.location.state, product.location.district} */}
                 </Text>
                 <Text className="text-base text-gray-700">
                   Contact: {product.contact}

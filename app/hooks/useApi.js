@@ -1,16 +1,13 @@
 import axios from "axios";
 
 const useApi = () => {
-  console.log("API Hook Initialized");
   const API_URL = "http://192.168.1.5:5000";
 
   const handleRequest = async (request, path, token) => {
-    console.log(`Requesting: ${API_URL}/${path}`);
-    console.log(`Token: ${token || "No Token Provided"}`);
+
 
     try {
       const response = await request();
-      console.log("Response:", response.data);
       return response;
     } catch (err) {
       const errorMessage = err.response ? err.response.data : err.message;

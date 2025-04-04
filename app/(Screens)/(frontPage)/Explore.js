@@ -7,10 +7,12 @@ import {
   ScrollView,
 } from "react-native";
 import React from "react";
+import { Link } from "expo-router";
 
 export default function Explore({ categoriesData }) {
   const { width } = useWindowDimensions();
   const isScreen = width < 600;
+  console.log(categoriesData)
   return (
     <View>
       <View className="flex flex-row items-center w-full px-2 mt-4">
@@ -18,10 +20,10 @@ export default function Explore({ categoriesData }) {
           Explore Category
         </Text>
         <View className="flex-1" />
-
+{/* 
         <Pressable onPress={() => alert("See All Clicked")}>
           <Text className="font-bold">See All</Text>
-        </Pressable>
+        </Pressable> */}
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -34,23 +36,33 @@ export default function Explore({ categoriesData }) {
             ? categoriesData[0].map((category, index) => (
                 <View
                   key={index}
-                  className="bg-TealGreen h-[360px] rounded-md mb-4"
+                  className="bg-TealGreen h-[360px] w-[360px] rounded-md mb-4 p-4"
                 >
                   {category.machineImages?.length > 0 && (
-                    <Image
-                      className="rounded-t-sm"
-                      style={{ width: 350, height: 250 }}
-                      source={{
-                        uri: `data:image/jpeg;base64,${category.machineImages[0]}`,
-                      }}
-                    />
+                    <Link
+                      href={`/(Screens)/(screen)/CategoryList/?industry=${category.industry}`}
+                      asChild
+                    >
+                      <Pressable className="w-full h-[75%]  overflow-hidden">
+                        <Image
+                          className="rounded-t-sm w-full h-full"
+                          resizeMode="contain"
+                          source={{
+                            uri: `data:image/jpeg;base64,${category.machineImages[0]}`,
+                          }}
+                        />
+                      </Pressable>
+                    </Link>
                   )}
+
                   <Text className="p-2 text-lg text-white font-bold">
                     {category.industry}
                   </Text>
                   {
-                    <Text className="p-2 text-lg text-white">({category.count})</Text>
-                    }
+                    <Text className="p-2 text-lg text-white">
+                      ({category.count})
+                    </Text>
+                  }
                 </View>
               ))
             : null}

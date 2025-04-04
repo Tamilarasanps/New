@@ -23,10 +23,10 @@ export default function Recommeded({ recommendedProducts }) {
           <Text className="text-xl font-bold text-TealGreen">
             Recommended For You
           </Text>
-          <View className="flex-1" />
+          {/* <View className="flex-1" />
           <Pressable onPress={() => alert("See All Clicked")}>
             <Text className="font-semibold">See All</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View className="flex flex-row p-4 gap-4 items-center">
@@ -37,9 +37,9 @@ export default function Recommeded({ recommendedProducts }) {
                   key={product._id}
                 >
                   <Link
-                    href={"/(components)/Client/(screen)/SelectProduct"}
+                    href={`/(Screens)/(screen)/SelectProduct?id=${product._id}`}
                     asChild
-                  ></Link>
+                  >
                   <Pressable>
                     <View style={{ position: "relative" }}>
                       <Image
@@ -65,10 +65,11 @@ export default function Recommeded({ recommendedProducts }) {
                         {product.category}
                       </Text>
                       <Text className="text-gray-600 font-semibold mt-1">
-                        {product.description}
+                        {product.description.length > 25 ? product.description.slice(0,25)+"...." : product.description }
                       </Text>
                     </View>
                   </Pressable>
+                  </Link>
                 </View>
               ))
             ) : (

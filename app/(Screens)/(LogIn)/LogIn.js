@@ -48,7 +48,7 @@ const LogIn = ({}) => {
       // Dynamically generate the signup URL
 
       const response = await axios.post(
-        "http://192.168.1.5:5000/I",
+        "http://192.168.1.5:5000/login",
         {
           mailOrphone,
           password,
@@ -60,7 +60,8 @@ const LogIn = ({}) => {
       console.log("Response received:", response);
 
       if (response && response.status === 200) {
-        toast.show(response.message || "Logged In successfully!", { type: "success" });
+        // toast.show(response.message || "Logged In successfully!", { type: "success" });
+        router.back
        
       }
     } catch (error) {

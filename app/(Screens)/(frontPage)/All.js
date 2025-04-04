@@ -18,11 +18,9 @@ export default function All() {
   }, []);
 
   const getIndustries = async () => {
-    console.log("triggered");
     try {
       const data = await getJsonApi(`CategoryPage`);
-      console.log(data + "plllll");
-      setIndustries(data.data);
+      setIndustries(data.data.industries);
     } catch (err) {
       console.log(err);
     }
@@ -42,12 +40,12 @@ export default function All() {
     "Textile Reprocessing Machines",
     "Embroidery Machines",
   ];
-  console.log(industries);
+
   return (
     <View className="">
       {Platform.OS === "web" && (
         <View
-          className="flex  flex-row w-full mb-2 mt-5 z-50 flex justify-center"
+          className="flex   flex-row w-full mb-2 mt-5 z-50 flex justify-center"
           style={{ position: "sticky", top: 0 }}
         >
           {/* Categories Section */}
@@ -56,7 +54,7 @@ export default function All() {
               className="text-center text-TealGreen text-sm font-semibold md:text-lg md:font-bold"
               onMouseEnter={() => setShow(true)}
             >
-              Categories
+              Industries
             </Text>
 
             {show && (
@@ -64,7 +62,7 @@ export default function All() {
                 <Pressable className="flex-1">
                   {show && (
                     <View
-                      className="absolute left-0 top-full z-50 w-[250%] border-2 border-gray-300 bg-gray-200 mt-2 rounded-md flex flex-row flex-wrap z-50 "
+                      className="absolute left-0 top-full z-50 w-[250%] border-2 border-gray-300 bg-white mt-2 rounded-md flex flex-row flex-wrap z-50 "
                       onMouseLeave={() => setShow(false)}
                     >
                       {industries?.length > 0 &&
@@ -78,12 +76,7 @@ export default function All() {
                               onMouseLeave={() => setHoverClr(null)}
                             >
                               <Text
-                                className="p-5 text-lg z-50"
-                                style={{
-                                  textDecorationLine:
-                                    hoverClr === index ? "underline" : "none",
-                                  color: hoverClr === index ? "red" : "black",
-                                }}
+                                className="p-5 text-lg z-50 hover:text-TealGreen hover:underline"
                               >
                                 {industry}
                               </Text>

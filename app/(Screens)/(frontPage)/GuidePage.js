@@ -68,7 +68,7 @@ export default function GuidePage() {
 
           {/* Call to action button */}
           <View className="items-center ">
-          <Link href={"/(components)/Client/(sell)/Sell"} asChild>
+          <Link href={"/(Screens)/(sell)/Sell"} asChild>
             <Pressable
               className="bg-yellow-600 rounded-sm items-center justify-center text-lg text-white mt-4 mx-4 p-3  "
               style={{ width: 200, marginBottom: 40 }}

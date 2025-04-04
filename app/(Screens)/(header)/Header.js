@@ -28,15 +28,10 @@ export default function Header() {
 
   const { getJsonApi } = useApi();
 
-  // const sell = () => router.push("/Client/Sell");
-  // const chat = () => router.push("/(component)/(chat)/Chat");
-  // const profile = () => router.push("/(component)/(profile)/Profile");
-  const fav = () => router.push("/(component)/(screen)/Fav");
-
   useEffect(() => {
     if (searchBar.length === 1 && prevLength.current === 0) fetchSearchResult();
     if (searchBar.length === 0) setSearchResults([]);
-  }, []);
+  }, [searchBar]);
 
   const fetchSearchResult = async () => {
     try {
@@ -78,6 +73,8 @@ export default function Header() {
           Machine Street
         </Text>
 
+        {/* search box */}
+
         <View
           className="md:w-[50%] w-[60%] flex-row items-center relative"
           ref={searchRef}
@@ -92,7 +89,7 @@ export default function Header() {
             }}
           />
           <Link
-            href={`/(components)/Client/(screen)/ProductList?searchTerms=${searchBar}`}
+            href={`/(Screens)/(screen)/ProductList?searchTerms=${searchBar}`}
             asChild
           >
             <Pressable className="absolute right-2">
@@ -105,7 +102,7 @@ export default function Header() {
               {filteredResults.slice(0, 10).map((item, index) => (
                 <Link
                   key={`result-${index}`}
-                  href={`/(components)/Client/(screen)/ProductList?searchTerms=${item}`}
+                  href={`/(Screens)/(screen)/ProductList?searchTerms=${item}`}
                   asChild
                 >
                   <Pressable className="px-4 py-2 hover:bg-gray-200">
@@ -135,7 +132,8 @@ export default function Header() {
                 </Text>
               </Pressable>
             </Link>
-            <Pressable onPress={fav}>
+            <Link href={"/(Screens)/(screen)/Fav"} asChild>
+            <Pressable >
               <View className="ms-4">
                 <FontAwesome name="star" size={20} color="white" />
               </View>
@@ -143,6 +141,7 @@ export default function Header() {
                 WishList
               </Text>
             </Pressable>
+            </Link>
             <Link href={"/(Screens)/(chat)/Chat"}>
               <Pressable>
                 <MaterialIcons name="chat" size={40} color="white" />
@@ -160,7 +159,8 @@ export default function Header() {
               isOpen ? "flex" : "hidden"
             }`}
           >
-            <Pressable onPress={fav}>
+            <Link href={"/(Screens)/(screen)/Fav"} asChild>
+            <Pressable>
               <View className="flex flex-row items-center space-x-4 p-4 bg-gray-100 rounded-sm mb-2 ">
                 <FontAwesome name="star" size={20} color="teal" />
                 <Text className="text-gray-500 font-semibold text-lg">
@@ -168,6 +168,7 @@ export default function Header() {
                 </Text>
               </View>
             </Pressable>
+            </Link>
             <Link href={"/(Screens)/(chat)/Chat"}>
               <Pressable className="flex flex-row items-center space-x-4 p-4 bg-gray-100 rounded-sm mb-2">
                 <MaterialIcons name="chat" size={30} color="teal" />

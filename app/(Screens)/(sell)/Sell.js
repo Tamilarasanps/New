@@ -8,7 +8,7 @@ import {
   Image,
   TextInput,
   View,
-  useWindowDimensions, 
+  useWindowDimensions,
 } from "react-native";
 import { FlatList } from "react-native";
 import { useEffect, useState } from "react";
@@ -20,12 +20,31 @@ import { allCountries } from "country-telephone-data";
 import useApi from "@/app/hooks/useApi";
 import ImageAndVideo from "./ImageAndVideo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Checkbox from "expo-checkbox";
+import { Picker } from "@react-native-picker/picker"; // Import Picker
+import useGeoLocation from "@/app/hooks/GeoLocation";
 
 export default function Sell() {
   const { width } = useWindowDimensions();
   const { getJsonApi } = useApi();
-  const {postJsonApi} = useApi();
+  const { postJsonApi } = useApi();
+  const { geoCoords, errorMsg, address } = useGeoLocation();
+
+  const [location, setLocation] = useState({
+    coords : "",
+    country: "",
+    region: "",
+    district: "",
+  });
+  const [regions, setRegions] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [countries, setCountries] = useState(["India"]);
+
+  //other countries input fields
+  const inputFields = [
+    { key: "country", label: "Country" },
+    { key: "region", label: "Region" },
+  ];
 
   const [selectedImage, setSelectedImage] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState([]);
@@ -39,9 +58,16 @@ export default function Sell() {
   const [selectedCode, setSelectedCode] = useState("+91");
   const [searchQuery, setSearchQuery] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [location, setLocation] = useState(["", ""]);
-  const [condition,setCondition] = useState("")
-  
+  const [districtsWithStates, setDistrictsWithStates] = useState([]);
+  const [india, setIndia] = useState(false);
+  const [condition, setCondition] = useState("");
+
+  const years = Array.from(
+    { length: new Date().getFullYear() - 1899 },
+    (_, i) => 1900 + i
+  );
+  const [selectedYear, setSelectedYear] = useState("");
+
   // search COmponenets
   const [searchValues, setSearchValues] = useState({
     industry: "",
@@ -67,7 +93,9 @@ export default function Sell() {
       try {
         try {
           const data = await getJsonApi(`CategoryPage`);
-          setIndustries(data);
+          setIndustries(data?.data.industries);
+          setRegions(data?.data?.states[0]?.states);
+          setDistrictsWithStates(data?.data?.states[1]?.districts);
         } catch (error) {
           console.error(error);
         }
@@ -75,6 +103,31 @@ export default function Sell() {
     };
     fetchIndustries();
   }, []);
+
+  useEffect(() => {
+    if (address?.country) {
+      setLocation({
+        coords : geoCoords || "",
+        country: address.country || "",
+        region: address.state || "",
+        district: address.district || "",
+      });
+    }
+  }, [address,geoCoords]);
+  useEffect(() => {
+    if (location.region) {
+      setDistricts(
+        () =>
+          districtsWithStates
+            .filter(
+              (state) =>
+                Object.keys(state)[0].toLowerCase().trim() ===
+                location.region.toLowerCase().trim()
+            ) // Find matching state
+            .flatMap((state) => Object.values(state)[0]) // Flatten directly
+      );
+    }
+  }, [location.region]); // Dependency array
 
   // fetching categories
 
@@ -84,7 +137,7 @@ export default function Sell() {
         const data = await getJsonApi(
           `CategoryPage/${searchValues.industry}/sell`
         );
-        setCategories(data);
+        setCategories(data.data);
       }
     } catch (err) {
       console.log(err);
@@ -96,24 +149,23 @@ export default function Sell() {
     try {
       if (searchValues.category.length > 0) {
         const data = await getJsonApi(`CategoryPage/${searchValues.category}`);
-        setMakes(data);
+        setMakes(data.data);
       }
     } catch (err) {
       console.log(err);
     }
   };
-  console.log(phoneNumber)
 
   // setting searchValues
   const handleChange = (key, value) => {
     setSearchValues((prev) => ({ ...prev, [key]: value }));
   };
-  console.log(searchValues.industry);
 
   // sending data to backend
 
   const sentData = async (e) => {
     e.preventDefault();
+    console.log((selectedVideo) + "after")
 
     if (
       !searchValues?.industry?.trim() ||
@@ -124,8 +176,9 @@ export default function Sell() {
       !priceType?.trim() ||
       !phoneNumber?.trim() ||
       !condition?.trim() ||
-      !location?.[0]?.trim() || // Checking if the first location value is provided
-      !location?.[1]?.trim()    // Checking if the second location value is provided
+      !String(location?.coords || "").trim() ||  
+      !String(location?.region || "").trim() ||  
+      !String(location?.country || "").trim()
     ) {
       Toast.show({
         type: "error",
@@ -136,7 +189,6 @@ export default function Sell() {
       });
       return;
     }
-    
     if (
       (!Array.isArray(selectedImage) || selectedImage.length === 0) &&
       (!Array.isArray(selectedVideo) || selectedVideo.length === 0)
@@ -149,8 +201,7 @@ export default function Sell() {
         topOffset: 0,
       });
       return;
-    } 
-
+    }
 
     const formData = new FormData();
     formData.append("industry", searchValues.industry);
@@ -161,7 +212,8 @@ export default function Sell() {
     formData.append("description", description);
     formData.append("mobile", phoneNumber.trim("0"));
     formData.append("condition", condition);
-    formData.append("location", location);
+    formData.append("yearOfMake", selectedYear);
+    formData.append("location", JSON.stringify(location));
 
     // Append all images
     selectedImage.forEach((image) => {
@@ -173,11 +225,11 @@ export default function Sell() {
       formData.append("videos", video.file);
     });
 
-    const token = await AsyncStorage.getItem("userToken")
+    const token = await AsyncStorage.getItem("userToken");
 
     try {
-      const response = await postJsonApi("productupload",formData,token)
-      
+      const response = await postJsonApi("productupload", formData, token);
+
       // axios.post(
       //   "http://192.168.1.5:5000/productupload",
       //   formData,
@@ -186,7 +238,6 @@ export default function Sell() {
       //   }
       // );
       if (response.status === 201 || response.status === 200) {
-
         Toast.show({
           type: "success",
           text1: "Success",
@@ -200,18 +251,22 @@ export default function Sell() {
             industry: "",
             category: "",
             make: "",
-          });          
+          });
           setPrice("");
           setPriceType("");
           setDescription("");
           setSelectedImage([]);
-          setCondition("")
-          setLocation(["",""])
-          setPhoneNumber("")
+          setCondition("");
+          setLocation({
+            coords : geoCoords || "",
+            country: address.country || "",
+            region: address.state || "",
+            district: address.district || "",
+          });
+          setPhoneNumber("");
           setSelectedVideo([]);
         }, 1000);
-      } 
-      else {
+      } else {
         Toast.show({
           type: "error",
           text1: "Upload Failed",
@@ -232,6 +287,11 @@ export default function Sell() {
     }
   };
 
+  const dropdownFields = [
+    { key: "region", label: "State", data: regions },
+    { key: "district", label: "district", data: districts },
+    { key: "country", label: "Country", data: countries },
+  ];
   return (
     <SafeAreaView className="flex-1">
       <View className="absolute top-10 left-0 right-0 z-50 ">
@@ -258,11 +318,11 @@ export default function Sell() {
           {/* image field */}
 
           <ImageAndVideo
-            selectedImage = {selectedImage}
-            setSelectedImage = {setSelectedImage}
-            selectedVideo = {selectedVideo}
-            setSelectedVideo = {setSelectedVideo}
-           />
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            selectedVideo={selectedVideo}
+            setSelectedVideo={setSelectedVideo}
+          />
           {/* industry, category and make */}
 
           <View>
@@ -324,6 +384,23 @@ export default function Sell() {
             ))}
           </View>
 
+          {/* year of make */}
+          <Text className="text-lg font-semibold text-teal-600 mt-6">
+            Year of Make:
+          </Text>
+          <View className="border border-gray-300 h-[50] rounded-lg mt-4 justify-center px-2">
+            <Picker
+              className="outline-none cursor-pointer h-full"
+              selectedValue={selectedYear}
+              onValueChange={(itemValue) => setSelectedYear(itemValue)}
+            >
+              <Picker.Item label="Select Year" value="" />
+              {years.map((year) => (
+                <Picker.Item key={year} label={year.toString()} value={year} />
+              ))}
+            </Picker>
+          </View>
+
           {/* Price */}
 
           <Text className="text-lg font-semibold text-teal-600 mt-6">
@@ -376,8 +453,7 @@ export default function Sell() {
             value={description}
             onChangeText={(item) => setDescription(item)}
             placeholderTextColor="gray"
-            multiline = {true}
-            
+            multiline={true}
           />
 
           {/* mobile */}
@@ -401,28 +477,90 @@ export default function Sell() {
           </View>
 
           {/* Location Section with Suggestions */}
-          {["State", "country"].map((i, ind) => (
-            <View key={ind}>
-              <Text className="text-lg font-semibold text-teal-600 mt-6">
-                {i}
-              </Text>
-              <View className="relative mt-4">
-                <TextInput
-                  key={i}
-                  className="border border-gray-300 h-[50] rounded-lg w-full p-3  focus:border-teal-600 outline-teal-600"
-                  placeholder={`Enter your  ${i}`}
-                  value={location[ind]}
-                  onChangeText={(text) => {
-                    setLocation((prevLocation) => {
-                      const updated = [...prevLocation]; // Copy the previous array
-                      updated[ind] = text; // Update the specific index
-                      return updated; // Return new state
-                    });
+          {/* Location Section with Suggestions */}
+          {/* Location Section with Suggestions */}
+          <View className="relative mt-10">
+            {/* Checkbox to Toggle India or Other Countries */}
+            <View className="flex flex-row items-center justify-end">
+              <View className="flex flex-row items-center">
+                <Checkbox
+                  value={india}
+                  onValueChange={() => {
+                    if (!india) {
+                      setLocation({
+                        coords :geoCoords,
+                        country: "",
+                        region: "",
+                        district: "",
+                      });
+                    } else {
+                      setLocation({
+                        coords : geoCoords,
+                        country: address.country || "",
+                        region: address.state || "",
+                        district: address.district || "",
+                      });
+                    }
+                    setIndia(!india);
                   }}
+                  className="w-5 h-5 border-gray-400 cursor-pointer"
+                  color={india ? "#008080" : undefined}
                 />
+                <Text className="ml-2 text-gray-700">Other than India</Text>
               </View>
             </View>
-          ))}
+
+            {!india
+              ? // Display dropdowns
+                dropdownFields.map(({ key, label, data }) => (
+                  <View key={key} className="mt-4">
+                    <Text className="text-lg font-semibold text-teal-600">
+                      {label}
+                    </Text>
+                    <View className="border border-gray-300 h-[50] rounded-lg mt-4 justify-center px-2 ">
+                      <Picker
+                        className="outline-none cursor-pointer h-full"
+                        selectedValue={location[key]}
+                        onValueChange={(value) =>
+                          setLocation({ ...location, [key]: value })
+                        }
+                      >
+                        <Picker.Item label={location[key]} value="" />
+                        <Picker.Item
+                          label={`Use my Current Location`}
+                          value=""
+                        />
+                        {data.map((item, index) => {
+                          // console.log("data : ", item)
+                          return (
+                            <Picker.Item
+                              key={index}
+                              label={item}
+                              value={item}
+                            />
+                          );
+                        })}
+                      </Picker>
+                    </View>
+                  </View>
+                ))
+              : // Display input fields
+                inputFields.map(({ key, label }) => (
+                  <View key={key} className="mt-4">
+                    <Text className="text-lg font-semibold text-teal-600">
+                      {label}
+                    </Text>
+                    <TextInput
+                      className="border border-gray-300 h-[50] rounded-lg w-full p-3 focus:border-teal-600 outline-teal-600"
+                      placeholder={`Enter your ${label}`}
+                      value={location[key]}
+                      onChangeText={(text) =>
+                        setLocation({ ...location, [key]: text })
+                      }
+                    />
+                  </View>
+                ))}
+          </View>
 
           <Pressable
             onPress={sentData}
@@ -437,8 +575,7 @@ export default function Sell() {
     </SafeAreaView>
   );
 }
-// search components
-
+// search componentsimport { useState, useEffect } from "react";
 const SearchComponent = ({
   data,
   label,
@@ -448,10 +585,22 @@ const SearchComponent = ({
   getMakes,
   handleChange,
 }) => {
-  console.log(data)
-  const filteredData = data.length>0 && data
-    .filter((item) => item.toLowerCase().includes(value.toLowerCase()))
-    .slice(0, 10);
+  const [isFocused, setIsFocused] = useState(false);
+  const [delayedFocus, setDelayedFocus] = useState(false);
+
+  const filteredData =
+    data?.length > 0
+      ? data.filter((item) => item.toLowerCase().includes(value.toLowerCase()))
+      : data;
+
+  useEffect(() => {
+    if (isFocused) {
+      const timer = setTimeout(() => setDelayedFocus(true), 1000); // 1-second delay
+      return () => clearTimeout(timer); // Clear timeout on unmount
+    } else {
+      setDelayedFocus(false);
+    }
+  }, [isFocused]);
 
   return (
     <View>
@@ -461,17 +610,15 @@ const SearchComponent = ({
         placeholder={`Search ${label}...`}
         value={value}
         onFocus={() => {
-          if (label === "Category") {
-            getCategory();
-          }
-          if (label === "Make") {
-            getMakes();
-          }
+          setIsFocused(true);
+          if (label === "Category") getCategory();
+          if (label === "Make") getMakes();
         }}
+        onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Hide FlatList with delay
         onChangeText={onChange}
         style={{ borderWidth: 1, padding: 10, margin: 10, borderRadius: 5 }}
       />
-      {value.length > 0 && (
+      {delayedFocus && (
         <View className="w-full bg-white border border-gray-300 rounded-md shadow-md mt-2 z-10">
           <FlatList
             data={filteredData}
@@ -479,19 +626,8 @@ const SearchComponent = ({
             renderItem={({ item }) => (
               <Pressable
                 onPress={() => {
-                  switch (label) {
-                    case "Industry":
-                      handleChange("industry", item);
-                      break;
-                    case "Category":
-                      handleChange("category", item);
-                      break;
-                    case "Make":
-                      handleChange("make", item);
-                      break;
-                    default:
-                      break;
-                  }
+                  handleChange(label.toLowerCase(), item);
+                  setTimeout(() => setIsFocused(false), 200);
                 }}
               >
                 <Text style={{ padding: 5 }}>{item}</Text>
