@@ -1,11 +1,9 @@
 import axios from "axios";
 
 const useApi = () => {
-  const API_URL = "http://192.168.1.5:5000";
+  const API_URL = "http://192.168.1.6:5000";
 
   const handleRequest = async (request, path, token) => {
-
-
     try {
       const response = await request();
       return response;
@@ -30,13 +28,15 @@ const useApi = () => {
 
   const POSTAPI = async (path, data, token) =>
     await handleRequest(
-      () => axios.post(`${API_URL}/${path}`, data, { headers: jsonHeader(token) }),
+      () =>
+        axios.post(`${API_URL}/${path}`, data, { headers: jsonHeader(token) }),
       path,
       token
     );
   const PATCHAPI = async (path, data, token) =>
     await handleRequest(
-      () => axios.patch(`${API_URL}/${path}`, data, { headers: jsonHeader(token) }),
+      () =>
+        axios.patch(`${API_URL}/${path}`, data, { headers: jsonHeader(token) }),
       path,
       token
     );

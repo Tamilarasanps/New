@@ -42,7 +42,7 @@ const CategoryManager = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.5:5000/adminCategories",
+        "http://192.168.1.6:5000/adminCategories",
         { cat },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -72,7 +72,7 @@ const CategoryManager = () => {
     console.log(selectedCategory);
     try {
       const response = await axios.get(
-        `http://192.168.1.5:5000/adminCategories/getCategory/${selectedCategory}`,
+        `http://192.168.1.6:5000/adminCategories/getCategory/${selectedCategory}`,
         {
           headers: { "Content-Type": "application/json" },
         }

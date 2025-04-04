@@ -33,7 +33,8 @@ console.log("geoCoords :", geoCoords)
     startLoading();
     try {
       const data = await getJsonApi(`homepage/?lat=${String(geoCoords.latitude)}&lng=${String(geoCoords.longitude)}`);
-      console.log(data)
+      // console.log(data)
+      
       setPageDetails(data.data);
     } catch (error) {
       console.error(error);

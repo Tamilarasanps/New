@@ -231,7 +231,7 @@ export default function Sell() {
       const response = await postJsonApi("productupload", formData, token);
 
       // axios.post(
-      //   "http://192.168.1.5:5000/productupload",
+      //   "http://192.168.1.6:5000/productupload",
       //   formData,
       //   {
       //     headers: { "Content-Type": "multipart/form-data" },

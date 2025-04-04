@@ -1,28 +1,15 @@
+import { View, Text } from "react-native";
 import React from "react";
-import { Platform } from "react-native";
-import "../global.css";
-import { Stack } from "expo-router";
-import { LoadingProvider } from "./context/LoadingContext";
-import { AuthProvider } from "./context/AuthProvider";
-import { SocketProvider } from "./context/SocketContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/FontAwesome"; // Add Icon import
-import HomePage from "./(Screens)/(frontPage)/HomePage";
-import Sell from "./(Screens)/(sell)/Sell";
-import WishList from "./(Screens)/(screen)/Fav";
-import Profile from "./(Screens)/Profile/Profile";
-import IndustryPage from "./(Screens)/mobileCategory/IndustryPage";
+import HomePage from "../(frontPage)/HomePage";
+import IndustryPage from "../mobileCategory/IndustryPage";
+import Sell from "../(sell)/Sell";
+import WishList from "../(screen)/Fav";
+import Profile from "../Profile/Profile";
 
-// Assuming that these components exist in your project
-
-const Tab = createBottomTabNavigator();
-
-// Bottom Bar for mobile devices, excludes web
-function BottomBar() {
-  // if (Platform.OS === "web") {
-  //   return null; // Don't show bottom bar on web
-  // }
-
+export default function BottomBar() {
+  const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
       initialRouteName="HomePage"
@@ -85,25 +72,3 @@ function BottomBar() {
     </Tab.Navigator>
   );
 }
-
-// Layout Component to wrap the main context providers
-const Layout = () => {
-  const admin = false; // You can change this based on actual logic
-
-  return (
-    <AuthProvider>
-      <SocketProvider>
-        <LoadingProvider>
-          {Platform.OS === "web" && (
-            <Stack screenOptions={{ headerShown: false }} />
-          )}
-          {Platform.OS !== "web" && <BottomBar />}
-        </LoadingProvider>
-      </SocketProvider>
-    </AuthProvider>
-  );
-};
-
-export default Layout;
-
-//

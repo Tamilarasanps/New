@@ -37,13 +37,13 @@ const SignUp = () => {
 
   const getSignupUrl = (step) => {
     if (step === 2) {
-      return "http://192.168.1.5:5000/signup/otpcheck";
+      return "http://192.168.1.6:5000/signup/otpcheck";
     } else if (step === 3) {
-      return "http://192.168.1.5:5000/signup/register";
+      return "http://192.168.1.6:5000/signup/register";
     } else if (step === 4) {
-      return "http://192.168.1.5:5000/signup/resendotp";
+      return "http://192.168.1.6:5000/signup/resendotp";
     }
-    return "http://192.168.1.5:5000/signup"; // Default case when no step matches
+    return "http://192.168.1.6:5000/signup"; // Default case when no step matches
   };
 
   console.log(step);

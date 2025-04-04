@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, Platform, Pressable} from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Platform,
+  Pressable,
+} from "react-native";
 import Header from "../(header)/Header";
 import All from "../(frontPage)/All";
 import { FontAwesome } from "@expo/vector-icons"; // ✅ Correct import
 import useApi from "@/app/hooks/useApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useWishlist from "@/app/hooks/useWishlist";
+import { router } from "expo-router";
 
 const WishList = () => {
   const { getJsonApi } = useApi();
-  const { wishlist, setWishlist,addToWishlist } = useWishlist();
+  const { wishlist, setWishlist, addToWishlist } = useWishlist();
 
   useEffect(() => {
     const getWishList = async () => {
@@ -24,7 +32,7 @@ const WishList = () => {
     };
     getWishList();
   }, []);
-  
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={{ flex: 1 }}>
@@ -77,22 +85,14 @@ const WishList = () => {
                     </Text>
                     <View className="flex flex-row  gap-8 justify-end mt-4">
                       <FontAwesome name="share" size={24} color="gray" />
-                    <Pressable
-                        onPress={async() => {
+                      <Pressable
+                        onPress={async () => {
                           const f = await addToWishlist(item);
-                          console.log("f :", f)
+                          console.log("f :", f);
                         }}
                       >
-                        <FontAwesome
-                          name="star"
-                          size={24}
-
-                          color={
-                           "red" 
-                          }
-                        />
+                        <FontAwesome name="star" size={24} color={"red"} />
                       </Pressable>
-                      
                     </View>
                   </View>
 

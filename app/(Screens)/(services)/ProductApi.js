@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_url_product = "http://192.168.1.5:5000/homepage";
-const API_url_SEARCH = "http://192.168.1.5:5000/homepage/searchResult";
+const API_url_product = "http://192.168.1.6:5000/homepage";
+const API_url_SEARCH = "http://192.168.1.6:5000/homepage/searchResult";
 
 export const getAllProduct = async () => {
   try {

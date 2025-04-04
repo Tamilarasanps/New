@@ -1,7 +1,7 @@
 // import axios from "axios";
 // import Toast from "react-native-toast-message";
 
-// const API_url = "http://192.168.1.5:5000/productupload";
+// const API_url = "http://192.168.1.6:5000/productupload";
 
 // export const sendApi = async ({
 //   value,

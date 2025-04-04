@@ -48,7 +48,7 @@ const LogIn = ({}) => {
       // Dynamically generate the signup URL
 
       const response = await axios.post(
-        "http://192.168.1.5:5000/login",
+        "http://192.168.1.6:5000/login",
         {
           mailOrphone,
           password,

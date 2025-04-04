@@ -84,7 +84,7 @@ const { width } = Dimensions.get("window");
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.1.5:5000/adminCategories",
+        "http://192.168.1.6:5000/adminCategories",
         cat,
         {
           headers: { "Content-Type": "application/json" },

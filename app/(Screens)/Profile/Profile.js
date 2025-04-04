@@ -1,11 +1,11 @@
-import { View, Text, Pressable, Image, Alert } from "react-native";
+import { View, Text, Pressable, Image, Alert,ScrollView } from "react-native";
 import { TextInput } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 import Header from "../(header)/Header";
 import All from "../(frontPage)/All";
 import Footer from "../(frontPage)/Footer";
 import { router } from "expo-router";
-import { ScrollView } from "react-native-gesture-handler";
+// import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
@@ -139,7 +139,7 @@ export default function Profile() {
   const passwordReset = async () => {
     if (password !== confirmpass) alert("password should not match");
     try {
-      // const response = await axios.get("http://192.168.1.6:5000/signup");
+      // const response = await axios.get("http://:5000/signup");
       const token = await AsyncStorage.getItem("userToken");
       const response = await postJsonApi(
         `profile/passwordReset`,
@@ -188,11 +188,9 @@ export default function Profile() {
             >
               {userProfileImage ? (
                 <Image
-                source={{ uri: userProfileImage }}
-                className="w-full h-full rounded-full"
-               
-              />
-              
+                  source={{ uri: userProfileImage }}
+                  className="w-full h-full rounded-full"
+                />
               ) : (
                 <FontAwesome name="user" size={100} color="white" />
               )}
