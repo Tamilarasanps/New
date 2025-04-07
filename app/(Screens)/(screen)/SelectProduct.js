@@ -6,6 +6,7 @@ import {
   ScrollView,
   useWindowDimensions,
   Pressable,
+  SafeAreaView
 } from "react-native";
 import React, { useEffect } from "react";
 import Header from "../(header)/Header";
@@ -73,6 +74,8 @@ export default function SelectProduct() {
   };
 
   return (
+    <SafeAreaView>
+
     <ScrollView>
       <View>
         <Header />
@@ -133,7 +136,7 @@ export default function SelectProduct() {
             >
               {/* Sticky Image Section */}
               <View
-              className="bg-gray-100"
+                className="bg-gray-100"
                 style={{
                   width: isScreen ? "35%" : "90%",
                   marginLeft: isScreen ? 100 : 0,
@@ -256,5 +259,6 @@ export default function SelectProduct() {
         {Platform.OS === "web" && <Footer />}
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }

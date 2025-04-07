@@ -5,13 +5,15 @@ import {
   useWindowDimensions,
   Pressable,
   ScrollView,
+  Platform,
+  SafeAreaView,
 } from "react-native";
 import React, { useState } from "react";
 import All from "../(frontPage)/All";
 import Header from "../(header)/Header";
 import Footer from "../(frontPage)/Footer";
 import Icon from "react-native-vector-icons/Ionicons";
-import {  Link } from "expo-router";
+import { Link } from "expo-router";
 import GuidePage from "../(frontPage)/GuidePage";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
@@ -46,6 +48,8 @@ export default function CategoryList() {
   };
 
   return (
+    <SafeAreaView>
+      
     <ScrollView>
       <View>
         <Header />
@@ -149,9 +153,10 @@ export default function CategoryList() {
           </View>
         </View>
 
-        <GuidePage />
-        <Footer />
+        {Platform.OS === "web" && <GuidePage />}
+        {Platform.OS === "web" && <Footer />}
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }

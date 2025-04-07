@@ -7,9 +7,11 @@ import {
   ScrollView,
 } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function Explore({ categoriesData }) {
+  const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const isScreen = width < 600;
   // console.log(categoriesData)
@@ -20,11 +22,8 @@ export default function Explore({ categoriesData }) {
           Explore Category
         </Text>
         <View className="flex-1" />
-{/* 
-        <Pressable onPress={() => alert("See All Clicked")}>
-          <Text className="font-bold">See All</Text>
-        </Pressable> */}
-      </View>
+        
+         </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="flex-row gap-2 justify-center items-center p-5">
@@ -39,20 +38,22 @@ export default function Explore({ categoriesData }) {
                   className="bg-TealGreen h-[360px] w-[360px] rounded-md mb-4 p-4"
                 >
                   {category.machineImages?.length > 0 && (
-                    <Link
-                      href={`/(Screens)/(screen)/CategoryList/?industry=${category.industry}`}
-                      asChild
+                    <Pressable
+                      className="w-full h-[75%]  overflow-hidden"
+                      onPress={() =>
+                        navigation.navigate("CategoryList", {
+                          industry: category.industry,
+                        })
+                      }
                     >
-                      <Pressable className="w-full h-[75%]  overflow-hidden">
-                        <Image
-                          className="rounded-t-sm w-full h-full"
-                          resizeMode="contain"
-                          source={{
-                            uri: `data:image/jpeg;base64,${category.machineImages[0]}`,
-                          }}
-                        />
-                      </Pressable>
-                    </Link>
+                      <Image
+                        className="rounded-t-sm w-full h-full"
+                        resizeMode="contain"
+                        source={{
+                          uri: `data:image/jpeg;base64,${category.machineImages[0]}`,
+                        }}
+                      />
+                    </Pressable>
                   )}
 
                   <Text className="p-2 text-lg text-white font-bold">

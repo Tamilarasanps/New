@@ -7,14 +7,17 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useState } from "react";
-import { Link } from "expo-router";
+
+import { useNavigation } from "@react-navigation/native";
 
 export default function Recommeded({ recommendedProducts }) {
   const [like, setUnlike] = useState(false);
   const width = useWindowDimensions();
   // const page = () => {
   //   router.push("/(component)/(screen)/SelectProduct");
+  // SelectedProduct
   // };
+  const navigation = useNavigation();
 
   return (
     <View style={{ zIndex: -1 }}>
@@ -36,11 +39,13 @@ export default function Recommeded({ recommendedProducts }) {
                   className="rounded-md p-3 bg-white border-2 border-gray-300"
                   key={product._id}
                 >
-                  <Link
-                    href={`/(Screens)/(screen)/SelectProduct?id=${product._id}`}
-                    asChild
+                  <Pressable
+                    onPress={() =>
+                      navigation.navigate("SelectedProduct", {
+                        id: product._id,
+                      })
+                    }
                   >
-                  <Pressable>
                     <View style={{ position: "relative" }}>
                       <Image
                         className="rounded-sm"
@@ -65,11 +70,12 @@ export default function Recommeded({ recommendedProducts }) {
                         {product.category}
                       </Text>
                       <Text className="text-gray-600 font-semibold mt-1">
-                        {product.description.length > 25 ? product.description.slice(0,25)+"...." : product.description }
+                        {product.description.length > 25
+                          ? product.description.slice(0, 25) + "...."
+                          : product.description}
                       </Text>
                     </View>
                   </Pressable>
-                  </Link>
                 </View>
               ))
             ) : (

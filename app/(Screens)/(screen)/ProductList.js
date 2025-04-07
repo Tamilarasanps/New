@@ -69,9 +69,7 @@ export default function ProductList() {
   return (
     <SafeAreaView>
       <ScrollView>
-        
         <View>
-          
           <Header />
           <All />
           <View
@@ -85,10 +83,10 @@ export default function ProductList() {
               }`}
               style={{
                 width: screen ? "20%" : "300px",
-                height: "full",
+                height: screen,
                 position: screen ? "relative" : "absolute",
                 top: 0,
-                zIndex:-1
+                zIndex: -1,
               }}
             >
               <View className="bg-white rounded-sm">

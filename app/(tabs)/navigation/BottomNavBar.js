@@ -7,6 +7,7 @@ import SellScreen from "../src/SellScreen";
 import wishlistScreen from "../src/WishlistScreen";
 import ProfileScreen from "../src/ProfileScreen";
 import ScreenNavigation from "./ScreenNavigation";
+import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +33,7 @@ function BottomNavBar() {
     >
       <Tab.Screen
         name="HomePage"
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="home" color={color} size={30} />
