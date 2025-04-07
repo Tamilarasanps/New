@@ -12,7 +12,7 @@ export default function CategoryScreen({ navigation }) {
         <View className="flex items-center">
           <Pressable
             className="mt-3 bg-red-600 w-[90%] h-[40] rounded-md flex items-center justify-center"
-            onPress={() => navigation.navigate("IndustrieScreen")}
+            onPress={() => navigation.navigate("ProductList")}
           >
             <Text className="font-semibold text-xl text-white">
               Spinning Machines
