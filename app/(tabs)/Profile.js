@@ -1,22 +1,20 @@
-import { View, Text, Pressable, Image, Alert,ScrollView } from "react-native";
+import { View, Text, Pressable, Image, Alert, ScrollView } from "react-native";
 import { TextInput } from "react-native-paper";
 import React, { useEffect, useState } from "react";
-import Header from "../(header)/Header";
-import All from "../(frontPage)/All";
-import Footer from "../(frontPage)/Footer";
 import { router } from "expo-router";
 // import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Mobile from "../../(tabs)/Mobile";
+import Mobile from "../(Screens)/(SignIn)/Mobile";
 import { allCountries } from "country-telephone-data";
-import Password from "../(SignIn)/Password";
+import Password from "../(Screens)/(SignIn)/Password";
+import Header from "../(Screens)/(header)/Header";
+import All from "../(Screens)/(frontPage)/All";
 
 export default function Profile() {
   const [userProfile, setUserProfile] = useState(null);

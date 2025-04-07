@@ -6,7 +6,7 @@ import { Link } from "expo-router";
 
 export default function GuidePage() {
   return (
-    <View className="bg-gray-100 ">
+    <View className="bg-gray-200 ">
       <View>
         <Text
           className="font-bold  text-TealGreen mt-3 flex items-center justify-center"

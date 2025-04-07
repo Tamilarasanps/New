@@ -2,15 +2,15 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import HomePage from "../(frontPage)/HomePage";
-import CategoryPage from "../mobileCategory/CategoryPage";
-import Sell from "../(sell)/Sell";
-import WishList from "../(screen)/Fav";
-import Profile from "../Profile/Profile";
+import HomeScreen from "../src/HomeScreen";
+import SellScreen from "../src/SellScreen";
+import wishlistScreen from "../src/WishlistScreen";
+import ProfileScreen from "../src/ProfileScreen";
+import ScreenNavigation from "./ScreenNavigation";
 
 const Tab = createBottomTabNavigator();
 
-function BottomBar() {
+function BottomNavBar() {
   if (Platform.OS === "web") {
     return null;
   }
@@ -32,7 +32,7 @@ function BottomBar() {
     >
       <Tab.Screen
         name="HomePage"
-        component={HomePage}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="home" color={color} size={30} />
@@ -41,7 +41,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Category"
-        component={CategoryPage}
+        component={ScreenNavigation}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="cogs" color={color} size={30} />
@@ -50,7 +50,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Sell"
-        component={Sell}
+        component={SellScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="plus" color={color} size={30} />
@@ -59,7 +59,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="fav"
-        component={WishList}
+        component={wishlistScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="star" color={color} size={30} />
@@ -68,7 +68,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="profile"
-        component={Profile}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="user" color={color} size={30} />
@@ -79,4 +79,4 @@ function BottomBar() {
   );
 }
 
-export default BottomBar;
+export default BottomNavBar;

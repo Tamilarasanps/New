@@ -12,7 +12,7 @@ import { Link } from "expo-router";
 export default function Explore({ categoriesData }) {
   const { width } = useWindowDimensions();
   const isScreen = width < 600;
-  console.log(categoriesData)
+  // console.log(categoriesData)
   return (
     <View>
       <View className="flex flex-row items-center w-full px-2 mt-4">

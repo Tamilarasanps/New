@@ -2,11 +2,13 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import HomePage from "../(frontPage)/HomePage";
-import CategoryPage from "../mobileCategory/CategoryPage";
-import Sell from "../(sell)/Sell";
-import WishList from "../(screen)/Fav";
-import Profile from "../Profile/Profile";
+import HomePage from "./HomePage";
+
+import Sell from "./Sell";
+import WishList from "./Fav";
+import Profile from "./Profile";
+import NesestedPage from "./NesestedPage";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +43,7 @@ function BottomBar() {
       />
       <Tab.Screen
         name="Category"
-        component={CategoryPage}
+        component={NesestedPage}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="cogs" color={color} size={30} />

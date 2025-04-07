@@ -8,7 +8,7 @@ import { View, Text } from "react-native";
 import OtpScreen from "./OtpScreen";
 import Password from "./Password";
 import { router } from "expo-router";
-import useApi from "./hooks/useApi";
+import useApi from "../hooks/useApi";
 
 const SignUp = () => {
   const [step, setStep] = useState(1);

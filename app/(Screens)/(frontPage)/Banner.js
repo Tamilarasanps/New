@@ -18,8 +18,8 @@ export default function Banner() {
   });
   return (
     <View
-      className="bg-TealGreen relative mt-5"
-      style={{ height: 150, marginBottom: 180,  zIndex: -1 }}
+      className="bg-TealGreen relative mt-24"
+      style={{ height: 150, marginBottom: 180, zIndex: -1 }}
     >
       <View className="justify-center items-center">
         <Image

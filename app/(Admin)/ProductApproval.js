@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import useApi from "../hooks/useApi";
-import Product from "../Product";
+import Product from "../(tabs)/Product";
 import ProductApprovalModal from "./ProctApprovalModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -15,8 +15,10 @@ const ProductApproval = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getJsonApi(`adminApproval/getPendingProducts/${status}` );
-        console.log(data)
+        const data = await getJsonApi(
+          `adminApproval/getPendingProducts/${status}`
+        );
+        console.log(data);
         setProducts(data.data);
       } catch (error) {
         console.error(error);
@@ -35,8 +37,7 @@ const ProductApproval = () => {
     if (currentIndex < products.length - 1) setCurrentIndex(currentIndex + 1);
   };
 
-  const handleApprove = (index,statuss) => {
-
+  const handleApprove = (index, statuss) => {
     const token = AsyncStorage.getItem("userToken");
     const updatedProduct = pathchApi(
       `adminApproval/updateAdminApproval/`,
@@ -49,7 +50,7 @@ const ProductApproval = () => {
       return updated;
     });
   };
-  
+
   return (
     <View className="bg-blue-500 flex-1">
       <View className="h-24 flex flex-row w-full">

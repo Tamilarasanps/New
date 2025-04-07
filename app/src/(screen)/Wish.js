@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function Check() {
+export default function Wish() {
   return (
     <View>
-      <Text>Check</Text>
+      <Text>Wish</Text>
     </View>
   )
 }

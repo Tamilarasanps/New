@@ -7,7 +7,7 @@ import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
 import Mobile from "./Mobile";
 import Email from "./Email";
-import useApi from "./hooks/useApi";
+import useApi from "../hooks/useApi";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

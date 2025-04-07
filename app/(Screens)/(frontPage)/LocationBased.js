@@ -7,7 +7,7 @@ export default function LocationBased() {
   const isLargeScreen = width > 600;
 
   return (
-    <View className="bg-gray-200">
+    <View className="bg-gray-100">
       <View className="flex flex-row items-center w-full px-2 mt-4 mb-4">
         <Text className="text-xl font-bold text-TealGreen">Location</Text>
         <View className="flex-1">
