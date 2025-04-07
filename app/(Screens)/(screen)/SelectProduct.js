@@ -6,7 +6,7 @@ import {
   ScrollView,
   useWindowDimensions,
   Pressable,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect } from "react";
 import Header from "../(header)/Header";
@@ -44,12 +44,34 @@ export default function SelectProduct() {
     fetchProduct();
   }, []);
 
+  // const fetchProduct = async () => {
+  //   try {
+  //     const data = await getJsonApi(`productDetails/${id}`);
+  //     setProduct(data.data[0]);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   const fetchProduct = async () => {
     try {
       const data = await getJsonApi(`productDetails/${id}`);
-      setProduct(data.data[0]);
+      const productData = data?.data?.[0];
+      console.log(productData)
+      setProduct(productData);
+
+      // 💡 Fetch recommended products by category (but not the current product)
+      if (productData?.category) {
+        const recommended = await getJsonApi(
+          `products?category=${productData.category}`
+        );
+        const filtered = recommended?.data?.filter(
+          (p) => p._id !== productData._id
+        );
+        setRecommendedProducts(filtered || []);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching product or recommended:", error);
     }
   };
 
@@ -74,163 +96,162 @@ export default function SelectProduct() {
   };
 
   return (
-    <SafeAreaView>
-
     <ScrollView>
-      <View>
-        <Header />
-        <All />
+      <SafeAreaView>
+        <View>
+          <Header />
+          <All />
 
-        {/* Responsive Layout */}
-        {Object.keys(product).length > 0 ? (
-          <>
-            <View>
-              {/* Star Icon */}
-              <View className="flex flex-row mt-5 z-50 relative">
-                <Pressable
-                  className="absolute top-2 right-10 "
-                  onPress={() => addToWishlist(product)}
-                >
-                  <FontAwesome
-                    name="star"
-                    size={30}
-                    color={wishlist?.includes(product._id) ? "red" : "white"}
-                  />
-                </Pressable>
-              </View>
-
-              {/* Name and Share Icon */}
-              <View className="flex flex-row mt-3">
-                <Text
-                  className="text-xl mt-3 ms-6"
-                  style={{ marginLeft: Platform.OS === "web" ? "45%" : "" }}
-                >
-                  Tamilarasan
-                </Text>
-                <View className="absolute right-10 mt-12 pt-3">
-                  <Pressable onPress={share}>
-                    <FontAwesome name="share" size={30} color="gray" />
+          {/* Responsive Layout */}
+          {Object.keys(product).length > 0 ? (
+            <>
+              <View>
+                {/* Star Icon */}
+                <View className="flex flex-row mt-5 z-50 relative">
+                  <Pressable
+                    className="absolute top-2 right-10 "
+                    onPress={() => addToWishlist(product)}
+                  >
+                    <FontAwesome
+                      name="star"
+                      size={30}
+                      color={wishlist?.includes(product._id) ? "red" : "white"}
+                    />
                   </Pressable>
                 </View>
-              </View>
 
-              {/* Machine Name */}
-              <Text
-                className="text-2xl font-bold mt-2 ms-6 pt-3"
+                {/* Name and Share Icon */}
+                <View className="flex flex-row mt-3">
+                  <Text
+                    className="text-xl mt-3 ms-6"
+                    style={{ marginLeft: Platform.OS === "web" ? "45%" : "" }}
+                  >
+                    Tamilarasan
+                  </Text>
+                  <View className="absolute right-10 mt-12 pt-3">
+                    <Pressable onPress={share}>
+                      <FontAwesome name="share" size={30} color="gray" />
+                    </Pressable>
+                  </View>
+                </View>
+
+                {/* Machine Name */}
+                <Text
+                  className="text-2xl font-bold mt-2 ms-6 pt-3"
+                  style={{
+                    marginLeft: Platform.OS === "web" ? "45%" : "",
+                    zIndex: -1,
+                  }}
+                >
+                  Machine Name
+                </Text>
+              </View>
+              <View
                 style={{
-                  marginLeft: Platform.OS === "web" ? "45%" : "",
+                  flexDirection: isScreen ? "row" : "column",
+                  marginTop: 20,
+                  justifyContent: "center",
+                  alignItems: isScreen ? "flex-start" : "center",
                   zIndex: -1,
                 }}
               >
-                Machine Name
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: isScreen ? "row" : "column",
-                marginTop: 20,
-                justifyContent: "center",
-                alignItems: isScreen ? "flex-start" : "center",
-                zIndex: -1,
-              }}
-            >
-              {/* Sticky Image Section */}
-              <View
-                className="bg-gray-100"
-                style={{
-                  width: isScreen ? "35%" : "90%",
-                  marginLeft: isScreen ? 100 : 0,
-                  position: isScreen ? "sticky" : "relative",
-                  top: 0,
-                  height: isScreen ? "70vh" : "auto",
-                  zIndex: 10,
-                  borderRadius: 10,
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  className="rounded-sm"
-                  source={
-                    {
-                      uri: `data:image/jpeg;base64,${product.machineImages[0]}`,
-                    }
-                    // Provide a local placeholder image if needed
-                  }
+                {/* Sticky Image Section */}
+                <View
+                  className="bg-gray-100"
                   style={{
-                    width: "100%",
-                    height: Platform.OS === "web" ? "400px" : 300,
+                    width: isScreen ? "35%" : "90%",
+                    marginLeft: isScreen ? 100 : 0,
+                    position: isScreen ? "sticky" : "relative",
+                    top: 0,
+                    height: isScreen ? "70vh" : "auto",
+                    zIndex: 10,
+                    borderRadius: 10,
+                    alignItems: "center",
                   }}
-                />
-                <View className=" absolute top-2 left-2 p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
-                  <Text className=" text-base font-bold">
-                    {product.priceType || "Negotiable"}
-                  </Text>
-                </View>
-                {/* <Pressable
+                >
+                  <Image
+                    className="rounded-sm"
+                    source={
+                      {
+                        uri: `data:image/jpeg;base64,${product.machineImages[0]}`,
+                      }
+                      // Provide a local placeholder image if needed
+                    }
+                    style={{
+                      width: "100%",
+                      height: Platform.OS === "web" ? "400px" : 300,
+                    }}
+                  />
+                  <View className=" absolute top-2 left-2 p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
+                    <Text className=" text-base font-bold">
+                      {product.priceType || "Negotiable"}
+                    </Text>
+                  </View>
+                  {/* <Pressable
                   className="absolute top-2 right-2"
                   onPress={() => whislist(product)}
                 >
                   <FontAwesome name="star" size={30} color="white" />
                 </Pressable> */}
 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View className=" mt-4 flex flex-row gap-2  z-1">
-                    {product.machineImages.map((image, index) => (
-                      <View key={index}>
-                        <Image
-                          className="rounded-sm"
-                          source={
-                            {
-                              uri: `data:image/jpeg;base64,${image}`,
-                            } // Provide a local placeholder image if needed
-                          }
-                          style={{ width: 80, height: 80 }}
-                        />
-                      </View>
-                    ))}
-                  </View>
-                </ScrollView>
-              </View>
-
-              {/* Product Details Section */}
-              <View
-                className=""
-                style={{
-                  flex: 1,
-                  // marginLeft: isScreen ? 0 : 0,
-                  paddingBottom: 20,
-                  width: isScreen ? 500 : "100%",
-                  marginTop: Platform.OS === "web" ? "-40px" : -20,
-                }}
-              >
-                <View className="mt-5 bg-gray-100 rounded-sm p-5">
-                  <View className="bg-gray-100">
-                    <View className="flex flex-row">
-                      <View className="mt-4 h-12 ms-5 mr-auto w-[150px] bg-TealGreen rounded-sm justify-center items-center">
-                        <Pressable
-                          onPress={() => {
-                            setSelectedConversation(product.userId);
-                            router.push("/(Screens)/(chat)/Chat");
-                          }}
-                        >
-                          <Text className="text-white text-lg">Chat</Text>
-                        </Pressable>
-                      </View>
-                      {Platform.OS !== "web" ? (
-                        <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center absolute right-6">
-                          <Text className="text-white text-lg">Call</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View className=" mt-4 flex flex-row gap-2  z-1">
+                      {product.machineImages.map((image, index) => (
+                        <View key={index}>
+                          <Image
+                            className="rounded-sm"
+                            source={
+                              {
+                                uri: `data:image/jpeg;base64,${image}`,
+                              } // Provide a local placeholder image if needed
+                            }
+                            style={{ width: 80, height: 80 }}
+                          />
                         </View>
-                      ) : null}
+                      ))}
                     </View>
+                  </ScrollView>
+                </View>
 
-                    <View className="flex flex-row mt-8 ">
-                      <View className="mt-4 h-10 ms-5 w-[100px] bg-TealGreen rounded-sm justify-center items-center">
-                        <Text className="text-white text-lg">
-                          $ {product.price}
-                        </Text>
+                {/* Product Details Section */}
+                <View
+                  className=""
+                  style={{
+                    flex: 1,
+                    // marginLeft: isScreen ? 0 : 0,
+                    paddingBottom: 20,
+                    width: isScreen ? 500 : "100%",
+                    marginTop: Platform.OS === "web" ? "-40px" : -20,
+                  }}
+                >
+                  <View className="mt-5 bg-gray-100 rounded-sm p-5">
+                    <View className="bg-gray-100">
+                      <View className="flex flex-row">
+                        <View className="mt-4 h-12 ms-5 mr-auto w-[150px] bg-TealGreen rounded-sm justify-center items-center">
+                          <Pressable
+                            onPress={() => {
+                              setSelectedConversation(product.userId);
+                              router.push("/(Screens)/(chat)/Chat");
+                            }}
+                          >
+                            <Text className="text-white text-lg">Chat</Text>
+                          </Pressable>
+                        </View>
+                        {Platform.OS !== "web" ? (
+                          <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center absolute right-6">
+                            <Text className="text-white text-lg">Call</Text>
+                          </View>
+                        ) : null}
                       </View>
 
-                      {/* <View
+                      <View className="flex flex-row mt-8 ">
+                        <View className="mt-4 h-10 ms-5 w-[100px] bg-TealGreen rounded-sm justify-center items-center">
+                          <Text className="text-white text-lg">
+                            $ {product.price}
+                          </Text>
+                        </View>
+
+                        {/* <View
                         className="mt-4 h-10 ms-5 w-[100px]  rounded-sm justify-center items-center"
                         style={{ backgroundColor: "#FFD700" }}
                       >
@@ -238,27 +259,27 @@ export default function SelectProduct() {
                           {product.negotiable ? "Negotiable" : "Fixed"}
                         </Text>
                       </View> */}
-                      <View className=" absolute right-10 mt-4  p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
-                        <Text className=" text-base font-bold">
-                          {product.priceType || "Negotiable"}
-                        </Text>
+                        <View className=" absolute right-10 mt-4  p-2 w-[100px] bg-yellow-500 rounded-sm justify-center items-center">
+                          <Text className=" text-base font-bold">
+                            {product.priceType || "Negotiable"}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
 
-                    <ProductDetails product={product} />
+                      <ProductDetails product={product} />
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          </>
-        ) : (
-          ""
-        )}
+            </>
+          ) : (
+            ""
+          )}
 
-        <Recommeded />
-        {Platform.OS === "web" && <Footer />}
-      </View>
+          <Recommeded />
+          {Platform.OS === "web" && <Footer />}
+        </View>
+      </SafeAreaView>
     </ScrollView>
-    </SafeAreaView>
   );
 }

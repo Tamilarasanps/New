@@ -216,7 +216,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/Feather";
 
-export default function Header() {
+export default function Header({navigation}) {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useWindowDimensions();
   const isDesktop = width > 1024;

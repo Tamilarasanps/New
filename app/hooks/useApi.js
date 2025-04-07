@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const useApi = () => {
-  const API_URL = "http://192.168.1.6:5000";
+  const API_URL = "http://192.168.43.41:5000";
 
   const handleRequest = async (request, path, token) => {
     try {

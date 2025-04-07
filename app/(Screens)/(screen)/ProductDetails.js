@@ -17,7 +17,7 @@ export default function ProductDetails({ product }) {
       Mail: "tamil@gmail.com",
     },
   ];
-  console.log(product)
+  console.log(product);
   return (
     <View>
       {Object.keys(product).length > 0 && (
