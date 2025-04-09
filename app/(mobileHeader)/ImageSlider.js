@@ -237,6 +237,7 @@
 //   },
 // });
 
+import Header from "@/app/(header)/Header";
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -246,14 +247,13 @@ import {
   Text,
   Platform,
 } from "react-native";
-import Header from "../(header)/Header";
 
 const MovingImages = () => {
   // Array of images
   const images = [
-    require("../../assets/machine/fabric.png"),
-    require("../../assets/machine/circular.jpg"),
-    require("../../assets/machine/cone.jpg"),
+    require("../assets/machine/fabric.png"),
+    require("../assets/machine/circular.jpg"),
+    require("../assets/machine/cone.jpg"),
   ];
 
   // State to keep track of the current image index

@@ -13,8 +13,8 @@ import useApi from "@/app/hooks/useApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useWishlist from "@/app/hooks/useWishlist";
 import { router } from "expo-router";
-import Header from "../../(Screens)/(header)/Header";
-import All from "../../(Screens)/(frontPage)/All";
+
+import All from "../../(frontPage)/All";
 
 const wishlistScreen = () => {
   const { getJsonApi } = useApi();
@@ -37,7 +37,7 @@ const wishlistScreen = () => {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={{ flex: 1 }}>
-        <Header />
+        <wishlistScreen />
         <All />
         <View style={{ zIndex: -1 }}>
           <Text className="text-xl font-bold my-8 mx-5">

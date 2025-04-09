@@ -55,7 +55,6 @@ export default function Sell() {
       iso2: c.iso2,
     }));
 
-
   const pickMedia = async (type) => {
     if (Platform.OS === "android" && Platform.Version < 29) {
       const { status } =
@@ -391,7 +390,7 @@ export default function Sell() {
             Condition:
           </Text>
           <View className="flex flex-row gap-10 mt-4">
-            {["Negotiable","Fixed"].map((item) => (
+            {["Negotiable", "Fixed"].map((item) => (
               <Pressable
                 key={item.id}
                 onPress={() => setRadiobtn(item)}
@@ -519,7 +518,6 @@ export default function Sell() {
   );
 }
 
-
 // import React, { useState } from 'react';
 // import { View, TextInput, FlatList, Text } from 'react-native';
 
@@ -566,14 +564,14 @@ export default function Sell() {
 //         value={searchValues.industry}
 //         onChange={(value) => handleChange('industry', value)}
 //       />
-      
+
 //       <SearchComponent
 //         data={categories}
 //         label="Category"
 //         value={searchValues.category}
 //         onChange={(value) => handleChange('category', value)}
 //       />
-      
+
 //       <SearchComponent
 //         data={makes}
 //         label="Make"

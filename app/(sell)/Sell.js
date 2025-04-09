@@ -31,7 +31,7 @@ export default function Sell() {
   const { geoCoords, errorMsg, address } = useGeoLocation();
 
   const [location, setLocation] = useState({
-    coords : "",
+    coords: "",
     country: "",
     region: "",
     district: "",
@@ -107,13 +107,13 @@ export default function Sell() {
   useEffect(() => {
     if (address?.country) {
       setLocation({
-        coords : geoCoords || "",
+        coords: geoCoords || "",
         country: address.country || "",
         region: address.state || "",
         district: address.district || "",
       });
     }
-  }, [address,geoCoords]);
+  }, [address, geoCoords]);
   useEffect(() => {
     if (location.region) {
       setDistricts(
@@ -165,7 +165,7 @@ export default function Sell() {
 
   const sentData = async (e) => {
     e.preventDefault();
-    console.log((selectedVideo) + "after")
+    console.log(selectedVideo + "after");
 
     if (
       !searchValues?.industry?.trim() ||
@@ -176,8 +176,8 @@ export default function Sell() {
       !priceType?.trim() ||
       !phoneNumber?.trim() ||
       !condition?.trim() ||
-      !String(location?.coords || "").trim() ||  
-      !String(location?.region || "").trim() ||  
+      !String(location?.coords || "").trim() ||
+      !String(location?.region || "").trim() ||
       !String(location?.country || "").trim()
     ) {
       Toast.show({
@@ -258,7 +258,7 @@ export default function Sell() {
           setSelectedImage([]);
           setCondition("");
           setLocation({
-            coords : geoCoords || "",
+            coords: geoCoords || "",
             country: address.country || "",
             region: address.state || "",
             district: address.district || "",
@@ -488,14 +488,14 @@ export default function Sell() {
                   onValueChange={() => {
                     if (!india) {
                       setLocation({
-                        coords :geoCoords,
+                        coords: geoCoords,
                         country: "",
                         region: "",
                         district: "",
                       });
                     } else {
                       setLocation({
-                        coords : geoCoords,
+                        coords: geoCoords,
                         country: address.country || "",
                         region: address.state || "",
                         district: address.district || "",

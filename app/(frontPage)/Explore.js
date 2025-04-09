@@ -5,16 +5,31 @@ import {
   useWindowDimensions,
   Pressable,
   ScrollView,
+  Platform,
+  Link,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-
+import { router } from "expo-router";
 
 export default function Explore({ categoriesData }) {
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const isScreen = width < 600;
   // console.log(categoriesData)
+
+  const handleProductPress = (category) => {
+    const categoryId = category.industry; // Ensure you're using the correct key
+
+    console.log("Navigating to SelectedProduct with id:", categoryId); // Check if id is correct
+
+    if (Platform.OS === "web") {
+      router.push(`/(screen)/CategoryList?industry=${category?.industry}`);
+    } else {
+      navigation.navigate("CategoryList", { industry : category?.industry });
+      console.log(category);
+    }
+  };
   return (
     <View>
       <View className="flex flex-row items-center w-full px-2 mt-4">
@@ -22,8 +37,7 @@ export default function Explore({ categoriesData }) {
           Explore Category
         </Text>
         <View className="flex-1" />
-        
-         </View>
+      </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="flex-row gap-2 justify-center items-center p-5">
@@ -38,13 +52,15 @@ export default function Explore({ categoriesData }) {
                   className="bg-TealGreen h-[360px] w-[360px] rounded-md mb-4 p-4"
                 >
                   {category.machineImages?.length > 0 && (
+                    // <Link href={"/(screen)/CategoryList"} asChild>
                     <Pressable
                       className="w-full h-[75%]  overflow-hidden"
-                      onPress={() =>
-                        navigation.navigate("CategoryList", {
-                          industry: category.industry,
-                        })
-                      }
+                      // onPress={() =>
+                      //   navigation.navigate("CategoryList", {
+                      //     industry: category.industry,
+                      //   })
+                      // }
+                      onPress={() => handleProductPress(category)}
                     >
                       <Image
                         className="rounded-t-sm w-full h-full"
@@ -54,6 +70,7 @@ export default function Explore({ categoriesData }) {
                         }}
                       />
                     </Pressable>
+                    // </Link>
                   )}
 
                   <Text className="p-2 text-lg text-white font-bold">

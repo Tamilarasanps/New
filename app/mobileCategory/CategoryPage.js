@@ -2,9 +2,10 @@ import { View, Text, Pressable } from "react-native";
 import React from "react";
 
 import { router } from "expo-router";
-import Header from "../(header)/Header";
+
 import { SafeAreaView } from "react-native-safe-area-context";
-import BottomBar from "@/app/(tabs)/_layout";
+import Header from "@/app/(header)/Header";
+// import BottomBar from "@/app/(tabs)/_layout";
 export default function CategoryPage() {
   return (
     <SafeAreaView>

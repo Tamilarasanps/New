@@ -14,10 +14,10 @@ import { FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import React from "react";
-import Mobile from "../../(Screens)/(SignIn)/Mobile";
+import Mobile from "../../(SignIn)/Mobile";
 import { allCountries } from "country-telephone-data";
 import useApi from "@/app/hooks/useApi";
-import ImageAndVideo from "../../(Screens)/(sell)/ImageAndVideo";
+import ImageAndVideo from "../../(sell)/ImageAndVideo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Checkbox from "expo-checkbox";
 import { Picker } from "@react-native-picker/picker"; // Import Picker

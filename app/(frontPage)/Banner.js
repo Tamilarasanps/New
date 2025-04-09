@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 export default function Banner() {
   const [image, setImage] = useState(0);
   const img = [
-    require("../../assets/machine/Screenshot.png"),
-    require("../../assets/machine/cone.jpg"),
-    require("../../assets/machine/machine.jpg"),
-    require("../../assets/machine/printing.jpg"),
+    require("../assets/machine/Screenshot.png"),
+    require("../assets/machine/cone.jpg"),
+    require("../assets/machine/machine.jpg"),
+    require("../assets/machine/printing.jpg"),
   ];
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function Banner() {
   });
   return (
     <View
-      className="bg-TealGreen relative mt-24"
+      className="bg-TealGreen relative mt-4"
       style={{ height: 150, marginBottom: 180, zIndex: -1 }}
     >
       <View className="justify-center items-center">

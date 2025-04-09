@@ -8,11 +8,12 @@ const useWishlist = () => {
 
   const addToWishlist = async (product) => {
     try {
+      console.log(product)
       const token = await AsyncStorage.getItem("userToken");
       const data = await pathchApi(
         `wishlist/add`,
         {
-          productId: product._id,
+          productId: product,
         },
         token
       );

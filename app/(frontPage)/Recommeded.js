@@ -119,7 +119,7 @@ export default function Recommeded({ recommendedProducts }) {
 
     if (Platform.OS === "web") {
       router.push({
-        pathname: "/(Screens)/(screen)/SelectProduct",
+        pathname: "/(screen)/SelectProduct",
         params: { id: productId },
       });
     } else {

@@ -9,7 +9,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import React, { useEffect } from "react";
-import Header from "../(header)/Header";
 import All from "../(frontPage)/All";
 import ProductDetails from "./ProductDetails";
 import Footer from "../(frontPage)/Footer";
@@ -24,6 +23,7 @@ import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useWishlist from "@/app/hooks/useWishlist";
+import Header from "@/app/(header)/Header";
 
 export default function SelectProduct() {
   const { width } = useWindowDimensions();
@@ -57,7 +57,7 @@ export default function SelectProduct() {
     try {
       const data = await getJsonApi(`productDetails/${id}`);
       const productData = data?.data?.[0];
-      console.log(productData)
+      console.log(productData);
       setProduct(productData);
 
       // 💡 Fetch recommended products by category (but not the current product)
@@ -121,14 +121,15 @@ export default function SelectProduct() {
                 </View>
 
                 {/* Name and Share Icon */}
-                <View className="flex flex-row mt-3">
+                <View className="flex flex-row mt-3 ">
+                 
                   <Text
-                    className="text-xl mt-3 ms-6"
-                    style={{ marginLeft: Platform.OS === "web" ? "45%" : "" }}
+                    className={`text-xl mt-3 ms-6 mb-3 `}
+                    style={{ marginLeft: (Platform.OS === "web" && width>=1024) ?  "45%" : "" }}
                   >
                     Tamilarasan
                   </Text>
-                  <View className="absolute right-10 mt-12 pt-3">
+                  <View className="absolute right-10 mt-12  pt-3">
                     <Pressable onPress={share}>
                       <FontAwesome name="share" size={30} color="gray" />
                     </Pressable>
@@ -137,11 +138,13 @@ export default function SelectProduct() {
 
                 {/* Machine Name */}
                 <Text
-                  className="text-2xl font-bold mt-2 ms-6 pt-3"
-                  style={{
-                    marginLeft: Platform.OS === "web" ? "45%" : "",
-                    zIndex: -1,
-                  }}
+                  className="text-2xl font-bold  ms-6 pt-3"
+                  style={[
+                    { marginLeft: (Platform.OS === "web" && width >= 1024) ? "45%" : "" },
+                    { zIndex: -1 }
+                  ]}
+                  
+                 
                 >
                   Machine Name
                 </Text>
@@ -227,7 +230,7 @@ export default function SelectProduct() {
                   <View className="mt-5 bg-gray-100 rounded-sm p-5">
                     <View className="bg-gray-100">
                       <View className="flex flex-row">
-                        <View className="mt-4 h-12 ms-5 mr-auto w-[150px] bg-TealGreen rounded-sm justify-center items-center">
+                        <View className="mt-12 h-12 ms-5 mr-auto w-[150px] bg-TealGreen rounded-sm justify-center items-center">
                           <Pressable
                             onPress={() => {
                               setSelectedConversation(product.userId);
@@ -238,14 +241,14 @@ export default function SelectProduct() {
                           </Pressable>
                         </View>
                         {Platform.OS !== "web" ? (
-                          <View className="mt-4 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center absolute right-6">
+                          <View className="mt-2 h-12 ms-5 w-[150px] bg-TealGreen rounded-sm justify-center items-center absolute right-6">
                             <Text className="text-white text-lg">Call</Text>
                           </View>
                         ) : null}
                       </View>
 
                       <View className="flex flex-row mt-8 ">
-                        <View className="mt-4 h-10 ms-5 w-[100px] bg-TealGreen rounded-sm justify-center items-center">
+                        <View className="mt-2 h-10 ms-5 w-[100px] bg-TealGreen rounded-sm justify-center items-center">
                           <Text className="text-white text-lg">
                             $ {product.price}
                           </Text>

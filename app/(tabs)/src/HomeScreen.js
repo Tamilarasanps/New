@@ -1,20 +1,22 @@
 import { View, Platform, ScrollView, Text } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import Recommeded from "../../(Screens)/(frontPage)/Recommeded";
-import Explore from "../../(Screens)/(frontPage)/Explore";
-import Contact from "../../(Screens)/(frontPage)/Contact";
-import Footer from "../../(Screens)/(frontPage)/Footer";
-import GuidePage from "../../(Screens)/(frontPage)/GuidePage";
-import LocationBased from "../../(Screens)/(frontPage)/LocationBased";
-import Header from "../../(Screens)/(header)/Header";
-import All from "../../(Screens)/(frontPage)/All";
-import ImageSlider from "../../(Screens)/(mobileHeader)/ImageSlider";
-import Banner from "../../(Screens)/(frontPage)/Banner";
+import Recommeded from "../../(frontPage)/Recommeded";
+import Explore from "../../(frontPage)/Explore";
+import Contact from "../../(frontPage)/Contact";
+import Footer from "../../(frontPage)/Footer";
+import GuidePage from "../../(frontPage)/GuidePage";
+import LocationBased from "../../(frontPage)/LocationBased";
+
+import All from "../../(frontPage)/All";
+
+import Banner from "../../(frontPage)/Banner";
 import { LoadingContext } from "@/app/context/LoadingContext";
 import Loading from "../../(tabs)/Loading";
 import useApi from "@/app/hooks/useApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useGeoLocation from "@/app/hooks/GeoLocation";
+import Imageslider from "../../(mobileHeader)/ImageSlider";
+import Header from "@/app/(header)/Header";
 
 export default function HomeScreen() {
   const [pageDetails, setPageDetails] = useState(null);
@@ -59,7 +61,7 @@ export default function HomeScreen() {
         {Platform.OS === "web" && <All />}
         {Platform.OS === "web" && <Banner />}
 
-        {Platform.OS !== "web" && <ImageSlider />}
+        {Platform.OS !== "web" && <Imageslider />}
 
         {pageDetails && (
           <>

@@ -10,7 +10,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import Header from "../(header)/Header";
 import All from "../(frontPage)/All";
 import GuidePage from "../(frontPage)/GuidePage";
 import Footer from "../(frontPage)/Footer";
@@ -20,8 +19,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useLocalSearchParams } from "expo-router";
 import useApi from "@/app/hooks/useApi";
 import { Link } from "expo-router";
+import Header from "@/app/(header)/Header";
+import { useRoute } from "@react-navigation/native";
 
-export default function ProductList() {
+export default function ProductList({navigation}) {
   // const productPage = () => {
   //   router.push("/(component)/(screen)/SelectProduct");
   // };
@@ -29,14 +30,21 @@ export default function ProductList() {
     {
       id: 1,
       label: "Price",
-    },
+    }, 
     {
       id: 2,
       label: "Negotiable",
     },
   ]);
-  const { searchTerms, priceType } = useLocalSearchParams() ?? {};
+  let searchTerms;
+ const route = useRoute();
 
+   if (Platform.OS === "web") {
+      searchTerms = useLocalSearchParams().searchTerms;
+    } else {
+      searchTerms = route?.params?.searchTerms;
+    }
+console.log(searchTerms, "searchTerms")
   const { getJsonApi } = useApi();
 
   const [products, setProducts] = useState([]);
@@ -67,8 +75,8 @@ export default function ProductList() {
   console.log(products);
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <ScrollView>
+      <SafeAreaView>
         <View>
           <Header />
           <All />
@@ -211,7 +219,7 @@ export default function ProductList() {
                       >
                         <View className="rounded-2xl p-3 bg-white border border-gray-300 shadow-sm">
                           <Link
-                            href={`/(Screens)/(screen)/SelectProduct?id=${product._id}`}
+                            href={`(screen)/SelectProduct?id=${product._id}`}
                             asChild
                           >
                             <Pressable>
@@ -274,7 +282,7 @@ export default function ProductList() {
         </View>
         {/* );
       })} */}
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 }

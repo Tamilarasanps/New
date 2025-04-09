@@ -266,16 +266,16 @@ export default function Header({navigation}) {
       className="bg-TealGreen w-full px-4 py-3"
       style={{ position: "sticky", top: 0, zIndex: 50 }}
     >
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-center justify-between bg-red-100">
         {/* Logo */}
-        <Text className="text-white text-xl font-bold shrink-0 w-[140px]">
+        <Text className="text-white text-xl font-bold shrink-0 w-[100px] ">
           Machine Street
         </Text>
 
         {/* Search Bar */}
         <View
           ref={searchRef}
-          className="flex-row bg-white rounded-md items-center flex-1 min-w-0 ml-2"
+          className="flex-row bg-red-300 rounded-md items-center flex-1 min-w-0 "
           style={{
             maxWidth: isDesktop ? 600 : undefined,
             paddingHorizontal: 10,
@@ -289,29 +289,31 @@ export default function Header({navigation}) {
               setSearchBar(text);
               setShowResults(text.length > 0);
             }}
+            style={{outline: "none"}}
           />
           <Link
-            href={`/(Screens)/(screen)/ProductList?searchTerms=${searchBar}`}
+            // href={`/(Screens)/(screen)/ProductList?searchTerms=${searchBar}`}
+            href={`/(screen)/ProductList?searchTerms=${searchBar}`}
             asChild
           >
-            <Pressable>
+            <Pressable className="absolute right-1">
               <Icon name="search" size={20} color="red" />
             </Pressable>
           </Link>
         </View>
 
         {/* Right Side Icons */}
-        <View className="flex-row items-center gap-4">
+        <View className="flex-row items-center gap-14 ">
           {isDesktop ? (
             <>
-              <Link href={"/(Screens)/(sell)/Sell"} asChild>
-                <Pressable className="bg-red-500 py-2 px-4 rounded-md">
+              <Link href={"/(tabs)/src/SellScreen"} asChild>
+                <Pressable className="bg-red-500 py-2 px-8 rounded-md ">
                   <Text className="text-white font-semibold text-base">
                     Sell
                   </Text>
                 </Pressable>
               </Link>
-              <Link href={"/(Screens)/(screen)/Fav"} asChild>
+              <Link href={"/(tabs)/src/WishlistScreen"} asChild>
                 <Pressable className="items-center">
                   <FontAwesome name="star" size={20} color="white" />
                   <Text className="text-white font-semibold text-sm">
@@ -321,18 +323,19 @@ export default function Header({navigation}) {
               </Link>
               <Link href={"/(Screens)/(chat)/Chat"} asChild>
                 <Pressable>
-                  <MaterialIcons name="chat" size={30} color="white" />
+                  <MaterialIcons name="chat" size={40} color="white" />
                 </Pressable>
               </Link>
               <Pressable
-                onPress={() => router.push("/(Screens)/Profile/Profile")}
+              className="mr-2"
+                onPress={() => router.push("/(tabs)/Profile")}
               >
-                <MaterialIcons name="account-circle" size={30} color="white" />
+                <MaterialIcons name="account-circle" size={40} color="white" />
               </Pressable>
             </>
           ) : (
-            <Pressable onPress={() => setIsOpen(!isOpen)} className="shrink-0">
-              <MaterialIcons name="menu" size={30} color="white" />
+            <Pressable onPress={() => setIsOpen(!isOpen)} className="shrink-0 ms-2">
+              <MaterialIcons name="menu" size={35} color="white" />
             </Pressable>
           )}
         </View>
@@ -347,7 +350,9 @@ export default function Header({navigation}) {
           {filteredResults.slice(0, 10).map((item, index) => (
             <Link
               key={index}
-              href={`/(Screens)/(screen)/ProductList?searchTerms=${item}`}
+              
+              // href={`/(Screens)/(screen)/ProductList?searchTerms=${item}`}
+              href={`/(screen)/ProductList?searchTerms=${item}`}
               asChild
             >
               <Pressable className="px-4 py-2 hover:bg-gray-200">
@@ -361,7 +366,7 @@ export default function Header({navigation}) {
       {/* Mobile Dropdown Menu */}
       {!isDesktop && isOpen && (
         <View className="absolute right-0 top-[60px] bg-red-600 w-[250px] p-2 rounded-sm shadow-lg">
-          <Link href={"/(Screens)/(screen)/Fav"} asChild>
+          <Link href={"/(tabs)/src/WishlistScreen"} asChild>
             <Pressable>
               <View className="flex flex-row items-center space-x-4 p-4 bg-gray-100 rounded-sm mb-2">
                 <FontAwesome name="star" size={20} color="teal" />
@@ -379,7 +384,7 @@ export default function Header({navigation}) {
               </Text>
             </Pressable>
           </Link>
-          <Link href="/(Screens)/Profile/Profile">
+          <Link href="/(tabs)/src/ProfileScreen">
             <Pressable className="flex flex-row items-center space-x-3 p-4 bg-gray-100 rounded-sm mb-2">
               <MaterialIcons name="account-circle" size={40} color="teal" />
               <Text className="text-gray-500 font-semibold text-lg">
@@ -387,7 +392,7 @@ export default function Header({navigation}) {
               </Text>
             </Pressable>
           </Link>
-          <Link href={"/(Screens)/(sell)/Sell"} asChild>
+          <Link href={"/(tabs)/src/SellScreen"} asChild>
             <Pressable className="bg-red-500 py-2 px-6 rounded-md mb-2">
               <Text className="text-white text-center text-lg font-semibold">
                 Sell

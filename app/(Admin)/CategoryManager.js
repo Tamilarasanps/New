@@ -110,7 +110,7 @@ const CategoryManager = () => {
   };
   return (
     <SafeAreaView>
-      {/* Toast */}
+      
       <View className="z-50">
         <Toast />
       </View>

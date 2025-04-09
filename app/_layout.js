@@ -6,13 +6,7 @@ import { LoadingProvider } from "./context/LoadingContext";
 import { AuthProvider } from "./context/AuthProvider";
 import { SocketProvider } from "./context/SocketContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/FontAwesome"; // Add Icon import
-import HomePage from "./(Screens)/(frontPage)/HomePage";
-import Sell from "./(Screens)/(sell)/Sell";
-import WishList from "./(Screens)/(screen)/Fav";
-import Profile from "./(Screens)/Profile/Profile";
-import IndustryPage from "./(Screens)/mobileCategory/IndustryPage";
-import BottomBar from "./(Screens)/navigator/BottomBar";
+
 
 // Assuming that these components exist in your project
 
@@ -95,7 +89,7 @@ const Layout = () => {
     <AuthProvider>
       <SocketProvider>
         <LoadingProvider>
-          <Stack screenOptions={{ headerShown: false }} ></Stack>
+          <Stack screenOptions={{ headerShown: false }}></Stack>
         </LoadingProvider>
       </SocketProvider>
     </AuthProvider>

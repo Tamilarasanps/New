@@ -1,6 +1,5 @@
 import { View, Text, Image, useWindowDimensions,Pressable,ScrollView } from "react-native";
 import React from "react";
-// import { Pressable, ScrollView } from "react-native-gesture-handler";
 
 export default function LocationBased() {
   const { width } = useWindowDimensions();
@@ -37,7 +36,7 @@ export default function LocationBased() {
             <Image
               className="rounded-sm"
               style={{ width: "100%", height: 200 }}
-              source={require("../../assets/machine/fabric.png")}
+              source={require("../assets/machine/fabric.png")}
             />
             <View className="flex flex-row items-center mt-3">
               <Text className="price bg-TealGreen text-white text-center rounded-sm w-[80px] h-[27px]">
@@ -67,7 +66,7 @@ export default function LocationBased() {
             <Image
               className="rounded-sm"
               style={{ width: "100%", height: 200 }}
-              source={require("../../assets/machine/fabric.png")}
+              source={require("../assets/machine/fabric.png")}
             />
             <View className="flex flex-row items-center mt-3">
               <Text className="price bg-TealGreen text-white text-center rounded-sm w-[80px] h-[27px]">
@@ -97,7 +96,7 @@ export default function LocationBased() {
             <Image
               className="rounded-sm"
               style={{ width: "100%", height: 200 }}
-              source={require("../../assets/machine/fabric.png")}
+              source={require("../assets/machine/fabric.png")}
             />
             <View className="flex flex-row items-center mt-3">
               <Text className="price bg-TealGreen text-white text-center rounded-sm w-[80px] h-[27px]">
@@ -127,7 +126,7 @@ export default function LocationBased() {
             <Image
               className="rounded-sm"
               style={{ width: "100%", height: 200 }}
-              source={require("../../assets/machine/fabric.png")}
+              source={require("../assets/machine/fabric.png")}
             />
             <View className="flex flex-row items-center mt-3">
               <Text className="price bg-TealGreen text-white text-center rounded-sm w-[80px] h-[27px]">

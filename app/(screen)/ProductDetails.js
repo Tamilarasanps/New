@@ -34,8 +34,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Machine Name :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5 "
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.MachineName}
                 </Text>
@@ -45,8 +48,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Industry :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {product.industry}
                 </Text>
@@ -56,8 +62,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Location :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.Location}
                 </Text>
@@ -67,8 +76,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Condition :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {product.condition}
                 </Text>
@@ -78,8 +90,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Functionality :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.Functionality}
                 </Text>
@@ -89,8 +104,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Year of Made :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.YearOfMade}
                 </Text>
@@ -100,15 +118,13 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Description :
               </Text>
-              <Text style={{ color: "#495057" }} className="ms-5">
-                {product.description}
-              </Text>
+              <Text style={{ color: "#495057" }}>{product.description}</Text>
 
               {/* Accessories */}
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Accessories :
               </Text>
-              <Text style={{ color: "#495057" }} className="ms-5">
+              <Text style={{ color: "#495057" }}>
                 Mini size 2in1 sealer and cutter is handheld and portable, you
                 can easily put it in your bag. Useful while traveling. This mini
                 bag sealer combines sealer and cutter functions in one
@@ -124,8 +140,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Name :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.Name}
                 </Text>
@@ -135,8 +154,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 Phone :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.Phone}
                 </Text>
@@ -146,8 +168,11 @@ export default function ProductDetails({ product }) {
               <Text className="text-xl font-bold text-gray-600 p-2">
                 E-mail :{" "}
                 <Text
-                  style={{ color: "#495057", fontWeight: "normal" }}
-                  className="ms-5"
+                  style={{
+                    color: "#495057",
+                    fontWeight: "normal",
+                    fontSize: 17,
+                  }}
                 >
                   {value.Mail}
                 </Text>

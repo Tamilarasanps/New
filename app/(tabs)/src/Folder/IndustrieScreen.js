@@ -1,6 +1,7 @@
 import { View, Text, Pressable, SafeAreaView } from "react-native";
 import React from "react";
-import Header from "@/app/(Screens)/(header)/Header";
+import Header from "@/app/(header)/Header";
+
 export default function IndustrieScreen({ navigation }) {
   return (
     <SafeAreaView>
@@ -68,5 +69,3 @@ export default function IndustrieScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-

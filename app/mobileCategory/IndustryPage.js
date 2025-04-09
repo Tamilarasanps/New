@@ -1,8 +1,9 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../(header)/Header";
+
 import { useRouter } from "expo-router";
+import Header from "@/app/(header)/Header";
 export default function IndustryPage() {
   const router = useRouter();
 

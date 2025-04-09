@@ -1,11 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import HomePage from "../HomePage";
-import CategoryList from "@/app/(Screens)/(screen)/CategoryList";
-import SelectProduct from "@/app/(Screens)/(screen)/SelectProduct";
-import Sell from "../Sell";
-import SellScreen from "../src/SellScreen";
-import ProfileScreen from "../src/ProfileScreen";
+
+import CategoryList from "@/app/(screen)/CategoryList";
+import SelectProduct from "@/app/(screen)/SelectProduct";
+import HomeScreen from "../src/HomeScreen";
+import ProductList from "@/app/(screen)/ProductList";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,8 +12,8 @@ export default function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="IndustryPage"
-        component={HomePage}
+        name="HomePage"
+        component={HomeScreen}
         options={{ title: "Home", headerShown: false }}
       />
       <Stack.Screen
@@ -23,18 +22,13 @@ export default function HomeStack() {
         options={{ title: "CategoryList ", headerShown: false }}
       />
       <Stack.Screen
+        name="ProductList" // 👈 new screen
+        component={ProductList}
+        options={{ title: "ProductList ", headerShown: false }}
+      />
+      <Stack.Screen
         name="SelectedProduct" // 👈 new screen
         component={SelectProduct}
-        options={{ title: "CategoryList ", headerShown: false }}
-      />
-      <Stack.Screen
-        name="Sell" // 👈 new screen
-        component={SellScreen}
-        options={{ title: "CategoryList ", headerShown: false }}
-      />
-      <Stack.Screen
-        name="Profile" // 👈 new screen
-        component={ProfileScreen}
         options={{ title: "CategoryList ", headerShown: false }}
       />
     </Stack.Navigator>

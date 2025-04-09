@@ -21,12 +21,16 @@ import React from "react";
 import HomeScreen from "./(tabs)/src/HomeScreen";
 import { Platform } from "react-native";
 import BottomNavBar from "./(tabs)/navigation/BottomNavBar";
+// import AdminHomePage from "./(Admin)/AdminHomePage";
+import HomePageAdmin from "./(Admin)/HomePageAdmin";
 
 export default function App() {
   return (
     <>
-      {Platform.OS !== "web" && <BottomNavBar />}
-      {Platform.OS === "web" && <HomeScreen />}
+      {/* <AdminHomePage /> */}
+       {/* <HomePageAdmin /> */}
+       {Platform.OS !== "web" && <BottomNavBar />}
+       {Platform.OS === "web" && <HomeScreen />}
     </>
   );
 }

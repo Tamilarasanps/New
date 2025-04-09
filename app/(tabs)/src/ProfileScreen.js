@@ -9,11 +9,11 @@ import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Mobile from "../../(Screens)/(SignIn)/Mobile";
+import Mobile from "../../(SignIn)/Mobile";
 import { allCountries } from "country-telephone-data";
-import Password from "../../(Screens)/(SignIn)/Password";
-import Header from "../../(Screens)/(header)/Header";
-import All from "../../(Screens)/(frontPage)/All";
+import Password from "../../(SignIn)/Password";
+import All from "../../(frontPage)/All";
+import Header from "@/app/(header)/Header";
 
 export default function ProfileScreen() {
   const [userProfile, setUserProfile] = useState(null);

@@ -77,10 +77,10 @@ export default function Radiobtn() {
       ) : (
         <FlatList
           data={product}
-          keyExtractor={(item) => item.id.toString()} 
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View>
-             <Text>welocme Hoome screen</Text>
+              <Text>welocme Hoome screen</Text>
             </View>
           )}
         />
