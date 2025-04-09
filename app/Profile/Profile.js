@@ -13,10 +13,11 @@ import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Mobile from "../(tabs)/Mobile";
+
 import { allCountries } from "country-telephone-data";
 import Password from "../(SignIn)/Password";
 import Header from "@/app/(header)/Header";
+import Mobile from "../(SignIn)/Mobile";
 
 export default function Profile() {
   const [userProfile, setUserProfile] = useState(null);

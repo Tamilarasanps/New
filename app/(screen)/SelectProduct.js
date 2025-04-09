@@ -24,25 +24,31 @@ import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useWishlist from "@/app/hooks/useWishlist";
 import Header from "@/app/(header)/Header";
+import { useRoute } from "@react-navigation/native";
 
 export default function SelectProduct() {
   const { width } = useWindowDimensions();
   const isScreen = width > 786;
-
+  const route = useRoute();
   const { selectedConversation, setSelectedConversation } = useConversation();
   const { wishlist, addToWishlist } = useWishlist();
 
   const router = useRouter();
 
-  const { id } = useLocalSearchParams() || {};
+  // const { id } = useLocalSearchParams() || {};
   const { getJsonApi, pathchApi } = useApi();
 
   const [product, setProduct] = useState({});
-  let searchTerms;
+  let id;
 
+  if (Platform.OS === "web") {
+    id = useLocalSearchParams().id;
+  } else {
+    id = route?.params?.id;
+  }
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [id]);
 
   // const fetchProduct = async () => {
   //   try {
@@ -122,10 +128,12 @@ export default function SelectProduct() {
 
                 {/* Name and Share Icon */}
                 <View className="flex flex-row mt-3 ">
-                 
                   <Text
                     className={`text-xl mt-3 ms-6 mb-3 `}
-                    style={{ marginLeft: (Platform.OS === "web" && width>=1024) ?  "45%" : "" }}
+                    style={{
+                      marginLeft:
+                        Platform.OS === "web" && width >= 1024 ? "45%" : "",
+                    }}
                   >
                     Tamilarasan
                   </Text>
@@ -140,11 +148,12 @@ export default function SelectProduct() {
                 <Text
                   className="text-2xl font-bold  ms-6 pt-3"
                   style={[
-                    { marginLeft: (Platform.OS === "web" && width >= 1024) ? "45%" : "" },
-                    { zIndex: -1 }
+                    {
+                      marginLeft:
+                        Platform.OS === "web" && width >= 1024 ? "45%" : "",
+                    },
+                    { zIndex: -1 },
                   ]}
-                  
-                 
                 >
                   Machine Name
                 </Text>

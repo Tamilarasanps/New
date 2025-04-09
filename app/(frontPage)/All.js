@@ -226,7 +226,10 @@ export default function All() {
           </Link>
 
           {/* Favourite */}
-          <Pressable className="flex-1">
+          <Pressable
+            className="flex-1"
+            onPress={() => router.push("/(tabs)/src/WishlistScreen")}
+          >
             <Text className="text-center text-TealGreen text-sm font-semibold md:text-lg md:font-bold">
               Favourite
             </Text>

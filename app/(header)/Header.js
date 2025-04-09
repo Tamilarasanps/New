@@ -215,8 +215,9 @@ import { Link, router } from "expo-router";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import useApi from "@/app/hooks/useApi";
 import Icon from "react-native-vector-icons/Feather";
+import BottomNavBar from "../(tabs)/navigation/BottomNavBar";
 
-export default function Header({navigation}) {
+export default function Header({ navigation }) {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useWindowDimensions();
   const isDesktop = width > 1024;
@@ -289,7 +290,7 @@ export default function Header({navigation}) {
               setSearchBar(text);
               setShowResults(text.length > 0);
             }}
-            style={{outline: "none"}}
+            style={{ outline: "none" }}
           />
           <Link
             // href={`/(Screens)/(screen)/ProductList?searchTerms=${searchBar}`}
@@ -327,14 +328,17 @@ export default function Header({navigation}) {
                 </Pressable>
               </Link>
               <Pressable
-              className="mr-2"
+                className="mr-2"
                 onPress={() => router.push("/(tabs)/Profile")}
               >
                 <MaterialIcons name="account-circle" size={40} color="white" />
               </Pressable>
             </>
           ) : (
-            <Pressable onPress={() => setIsOpen(!isOpen)} className="shrink-0 ms-2">
+            <Pressable
+              onPress={() => setIsOpen(!isOpen)}
+              className="shrink-0 ms-2"
+            >
               <MaterialIcons name="menu" size={35} color="white" />
             </Pressable>
           )}
@@ -350,7 +354,6 @@ export default function Header({navigation}) {
           {filteredResults.slice(0, 10).map((item, index) => (
             <Link
               key={index}
-              
               // href={`/(Screens)/(screen)/ProductList?searchTerms=${item}`}
               href={`/(screen)/ProductList?searchTerms=${item}`}
               asChild
@@ -384,14 +387,15 @@ export default function Header({navigation}) {
               </Text>
             </Pressable>
           </Link>
-          <Link href="/(tabs)/src/ProfileScreen">
-            <Pressable className="flex flex-row items-center space-x-3 p-4 bg-gray-100 rounded-sm mb-2">
-              <MaterialIcons name="account-circle" size={40} color="teal" />
-              <Text className="text-gray-500 font-semibold text-lg">
-                Profile
-              </Text>
-            </Pressable>
-          </Link>
+
+          <Pressable
+            className="flex flex-row items-center space-x-3 p-4 bg-gray-100 rounded-sm mb-2"
+            onPress={() => router.push("/(tabs)/src/ProfileScreen")}
+          >
+            <MaterialIcons name="account-circle" size={40} color="teal" />
+            <Text className="text-gray-500 font-semibold text-lg">Profile</Text>
+          </Pressable>
+
           <Link href={"/(tabs)/src/SellScreen"} asChild>
             <Pressable className="bg-red-500 py-2 px-6 rounded-md mb-2">
               <Text className="text-white text-center text-lg font-semibold">
@@ -401,6 +405,7 @@ export default function Header({navigation}) {
           </Link>
         </View>
       )}
+      {/* <BottomNavBar /> */}
     </View>
   );
 }

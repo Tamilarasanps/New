@@ -4,12 +4,11 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { FloatingLabelInput } from "react-native-floating-label-input";
 import { allCountries } from "country-telephone-data";
 import { useToast } from "react-native-toast-notifications";
-import axios from "axios";
-import Mobile from "./Mobile";
-import Email from "./Email";
 import useApi from "../hooks/useApi";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Mobile from "../(SignIn)/Mobile";
+import Email from "../(SignIn)/Email";
 
 const Login = ({}) => {
   const [mailOrphone, setMailOrphone] = useState("");

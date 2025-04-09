@@ -5,6 +5,8 @@ import CategoryList from "@/app/(screen)/CategoryList";
 import SelectProduct from "@/app/(screen)/SelectProduct";
 import HomeScreen from "../src/HomeScreen";
 import ProductList from "@/app/(screen)/ProductList";
+import ProductDetails from "@/app/(screen)/ProductDetails";
+import wishlistScreen from "../src/WishlistScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,10 +29,29 @@ export default function HomeStack() {
         options={{ title: "ProductList ", headerShown: false }}
       />
       <Stack.Screen
-        name="SelectedProduct" // 👈 new screen
+        name="SelectProduct" // 👈 new screen
         component={SelectProduct}
-        options={{ title: "CategoryList ", headerShown: false }}
+        options={{ title: "SelectedProduct ", headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProductDetails" // 👈 new screen
+        component={ProductDetails}
+        options={{ title: "ProductDetails ", headerShown: false }}
       />
     </Stack.Navigator>
   );
 }
+
+const HeaderStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="wishlistScreen"
+        component={wishlistScreen}
+        options={{ title: "Home", headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export { HeaderStack };

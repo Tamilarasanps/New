@@ -26,7 +26,7 @@ export default function Explore({ categoriesData }) {
     if (Platform.OS === "web") {
       router.push(`/(screen)/CategoryList?industry=${category?.industry}`);
     } else {
-      navigation.navigate("CategoryList", { industry : category?.industry });
+      navigation.navigate("CategoryList", { industry: category?.industry });
       console.log(category);
     }
   };
@@ -64,7 +64,7 @@ export default function Explore({ categoriesData }) {
                     >
                       <Image
                         className="rounded-t-sm w-full h-full"
-                        resizeMode="contain"
+                        resizeMode="cover"
                         source={{
                           uri: `data:image/jpeg;base64,${category.machineImages[0]}`,
                         }}

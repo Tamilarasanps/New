@@ -95,13 +95,13 @@ import {
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function Recommeded({ recommendedProducts }) {
   const width = useWindowDimensions();
 
   const navigation = useNavigation();
-
+  const router = useRouter();
   // const handleProductPress = (product) => {
   //   if (Platform.OS === "web") {
   //     router.push({
@@ -113,17 +113,16 @@ export default function Recommeded({ recommendedProducts }) {
   //   }
   // };
   const handleProductPress = (product) => {
-    const productId = product._id; // Ensure you're using the correct key
-
-    console.log('Navigating to SelectedProduct with id:', productId); // Check if id is correct
+    // const productId = product._id; // Ensure you're using the correct key
+    // console.log("Navigating to SelectedProduct with id:", productId); // Check if id is correct
 
     if (Platform.OS === "web") {
       router.push({
         pathname: "/(screen)/SelectProduct",
-        params: { id: productId },
+        params: { id: product },
       });
     } else {
-      navigation.navigate("SelectedProduct", { id: productId });
+      navigation.navigate("SelectProduct", { id: product });
     }
   };
 
@@ -143,7 +142,7 @@ export default function Recommeded({ recommendedProducts }) {
                   className="rounded-md p-3 bg-white border-2 border-gray-300"
                   key={product._id}
                 >
-                  <Pressable onPress={() => handleProductPress(product)}>
+                  <Pressable onPress={() => handleProductPress(product._id)}>
                     <View style={{ position: "relative" }}>
                       <Image
                         className="rounded-sm"
