@@ -109,7 +109,7 @@ export default function SelectProduct() {
     if (!product) {
       console.log("Product Not Found");
       return;
-    }
+    }  
 
     const productUrl = `http://localhost:8081/product/${
       product.MachineName || product._id

@@ -139,9 +139,14 @@ const MechanicList_2 = () => {
 
   // filter function
 
+  // Contact: {mechanic.contact?.countryCode}{" "}
+  //                             {mechanic.contact?.number}
   function openDialer(mechanic) {
-    if (mechanic.contact?.number) {
-      Linking.openURL(`tel:${mechanic.contact.number}`);
+    const { countryCode, number } = mechanic.contact || {};
+    if (countryCode && number) {
+      // Dial the phone number with the country code
+      const phoneNumber = `${countryCode}${number}`;
+      Linking.openURL(`tel:${phoneNumber}`);
     } else {
       console.log("No contact number available");
     }
@@ -177,7 +182,6 @@ const MechanicList_2 = () => {
       ? mechanic.averageRating >= selectedRating &&
         mechanic.averageRating < selectedRating + 1
       : true;
-    console.log(mechanic.contact.number, "mechanics");
 
     return (
       matchesIndustry &&
@@ -504,12 +508,17 @@ const MechanicList_2 = () => {
                           </Text>
                         </View>
                         <View className="flex-row mt-2">
-                          <FontAwesome
-                            name="phone"
-                            size={20}
-                            color="#2095A2"
-                            style={{ marginTop: "8px", marginRight: 7 }}
-                          />
+                          {Platform.OS === "web" ? (
+                            <FontAwesome
+                              name="phone"
+                              size={20}
+                              color="#2095A2"
+                              style={{ marginTop: "8px", marginRight: 7 }}
+                            />
+                          ) : (
+                            ""
+                          )}
+
                           {Platform.OS === "web" ? (
                             <Text
                               className="text-md font-semibold mt-2"
@@ -520,17 +529,35 @@ const MechanicList_2 = () => {
                             </Text>
                           ) : (
                             // filteredMechanics.map((mechanic) => (
+                            <>
+                              <Text
+                                className="text-md font-semibold mt-2"
+                                style={{ flexShrink: 1 }}
+                              >
+                                Contact: {mechanic.contact?.countryCode}{" "}
+                                {mechanic.contact?.number}
+                              </Text>
                               <Pressable
+                                className=" h-10  w-[100px] bg-TealGreen rounded-sm justify-center items-center mt-2"
+                                // onPress={openDailer}
+                                key={mechanic.id}
+                                onPress={() => openDialer(mechanic)}
+                              >
+                                <Text className="text-white text-lg">Call</Text>
+                              </Pressable>
+                              {/* <Pressable
                                 key={mechanic.id}
                                 onPress={() => openDialer(mechanic)}
                                 className="bg-red-500 p-3 rounded-md"
                               >
                                 <Text>Call</Text>
-                              </Pressable>
+                              </Pressable> */}
+                            </>
+
                             // ))
                           )}
                         </View>
-                        <View className="flex-row gap-4 items-center mt-8">
+                        <View className="flex-row gap-4 items-center mt-4">
                           {mechanic?.averageRating ? (
                             <>
                               <View className="bg-green-600 px-3 py-1 rounded-lg flex-row gap-2 items-center">

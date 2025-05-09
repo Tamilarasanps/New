@@ -10,6 +10,7 @@ import {
 import { useVideoPlayer, VideoView } from "expo-video";
 
 const PostGrid = ({ posts, onPostPress, width }) => {
+  // console.log("posts :", posts)
   if (!posts) {
     return (
       <View

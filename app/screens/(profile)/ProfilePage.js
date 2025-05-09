@@ -217,7 +217,7 @@ const ProfilePage = ({ route }) => {
   // fetch comments
 
   async function fetchComments(postId) {
-    console.log(" fetchComments reached")
+    console.log(" fetchComments reached");
     const token = await AsyncStorage.getItem("userToken");
 
     try {
@@ -234,7 +234,7 @@ const ProfilePage = ({ route }) => {
 
   useEffect(() => {
     const checkProfile = async () => {
-    console.log(" checkProfile reached")
+      console.log(" checkProfile reached");
 
       try {
         const storedToken = await AsyncStorage.getItem("userToken");
@@ -311,22 +311,21 @@ const ProfilePage = ({ route }) => {
   //   services: [],
   // });
 
-  // async function handleImages() {}
-  // async function handleVideo() {}
+  async function handleImages() {}
+  async function handleVideo() {}
 
-  // async function handleUpload() {
-  //   const result = await pickMedia();
-  //   if (!result.canceled && result.assets && result.assets.length > 0) {
-  //     const type = result.assets[0].mimeType.split("/")[0];
+  async function handleUpload() {
+    const result = await pickMedia();
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const type = result.assets[0].mimeType.split("/")[0];
 
-  //     type === "image"
-  //       ? handleImages(result.assets)
-  //       : handleVideo(result.assets[0]);
-  //   }
-  // }edit
+      type === "image"
+        ? handleImages(result.assets)
+        : handleVideo(result.assets[0]);
+    }
+  }
   async function handleImageUpload(result, imagetype) {
     console.log("handleImageUpload");
-    console.log("result :", result);
     try {
       console.log(imagetype);
       // const response = await axios.get("http://192.168.1.6:5000/signup");
@@ -376,15 +375,28 @@ const ProfilePage = ({ route }) => {
       className="flex-1"
     >
       <ScrollView className="flex-1 ">
+        {/* Back Icon */}
+        <View
+          className="   z-50 flex justify-center"
+          style={{ width: "100%", height: "48" }}
+        >
+          <Pressable
+            onPress={()=>navigation.goBack()}
+            className="flex-row items-center h-12 px-4"
+          >
+            <Icon name="arrow-left" size={24} color="grey" />
+            {/* <Text className="text-white font-semibold ml-2">Back</Text> */}
+          </Pressable>
+        </View>
         {/* Banner Section */}
         <View className="relative h-64 w-full bg-TealGreen ">
           <View className="w-full h-full ">
-            <Icon
+            {/* <Icon
               name="arrow-left"
               size={24}
               color="#000"
               onPress={() => navigation.goBack()}
-            />
+            /> */}
             <Image
               source={{
                 uri: `data:image/jpeg;base64,${userProfile?.banner}`,
@@ -436,7 +448,7 @@ const ProfilePage = ({ route }) => {
                 width: 200,
                 height: 200,
                 borderRadius: 100,
-                overflow: "hidden", // Ensures circular shape
+                // overflow: "hidden", // Ensures circular shape
               }}
             >
               <View
@@ -502,7 +514,7 @@ const ProfilePage = ({ route }) => {
               transparent
               animationType="slide"
               visible={modalVisible}
-              onRequestClose={() => setModalVisible(true)}
+              onRequestClose={() => setModalVisible(false)}
             >
               <BlurView
                 intensity={50}
@@ -529,8 +541,7 @@ const ProfilePage = ({ route }) => {
                       <Icon name="log-out" size={30} color="#2095A2" />
                       <Pressable
                         onPress={() => {
-                          setUpdateModal(false);
-
+                          setModalVisible(false);
                           handleLogout();
                         }}
                       >
@@ -800,7 +811,7 @@ const ProfilePage = ({ route }) => {
           posts={posts}
           onPostPress={(index) => {
             setActivePostIndex(index);
-            // console.log("index :", index)
+            console.log("index :", index);
           }}
           width={width}
         />
@@ -810,7 +821,7 @@ const ProfilePage = ({ route }) => {
             posts={posts}
             activeIndex={activePostIndex}
             userProfile={userProfile}
-            // onClose={() => setActivePostIndex(null)}
+            onClose={() => setActivePostIndex(null)}
             width={width}
             handleLike={handleLike}
             setPosts={setPosts}

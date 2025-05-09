@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {  // ✅ Checking if authUser is valid
-      const newSocket = io("http://192.168.1.5:5000", {
+      const newSocket = io("http://192.168.1.9:5000", {
         transports: ["websocket", "polling"],
         query: {
           token : authUser,

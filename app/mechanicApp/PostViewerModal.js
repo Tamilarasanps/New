@@ -20,6 +20,8 @@ import CommentModal from "./CommentModal";
 import { useSocketContext } from "../context/SocketContext";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useCallback } from "react";
+import { useNavigation } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PostViewerModal = ({
   posts,
@@ -35,7 +37,7 @@ const PostViewerModal = ({
   comment,
   setComment,
   fetchComments,
-  deleteApi
+  deleteApi,
 }) => {
   if (activeIndex === null) return null;
 
@@ -47,70 +49,63 @@ const PostViewerModal = ({
   const { socket } = useSocketContext();
   const [showDelete, setShowDelete] = useState("");
 
+  const navigation = useNavigation();
 
-  // async function deletePostLogic(postId) {
-  //   try{
-  //     const response = await deleteApi(
-  //       `mechanicList/deletePosts/${imagetype}`,
-  //       formdata,
-  //       token
-  //     );
-  //     if (response.status === 200) {
-  //      setPosts(()=>{
-  //       const updated = posts;
-  //       updated.filter((post)=>post._id===postId)
-  //       return updated
-  //      })
-  //     }
-  //     // setUserProfileImage(result.assets[0].uri);
-  //     // setUserProfile(response.data);
-  //   } catch (error) {
-  //     console.error(error.message, "error");
-  //   }
-    
+  async function deletePostLogic(postId) {
+  const token = await AsyncStorage.getItem("userToken");
+  console.log("token :", token)
+
+    try {
+      const response = await deleteApi(`mechanicList/deletePosts`, {"postId" :postId}, token);
+      console.log("response :", response)
+      if (response.status === 200) {
+        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+      }
+    } catch (error) {
+      console.error(error.message, "error");
   // }
-  
-  // const handleDeletePost = useCallback(function (postId) {
-  //   try {
-  //     deletePostLogic(postId);
-  //   } catch (err) {
-  //     console.error("Error deleting post:", err);
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const handleLikeUpdate = async (data) => {
-  //     try {
-  //       setPosts((prevPosts) =>
-  //         prevPosts.map((post) => {
-  //           console.log("socket");
-  //           if (post._id.toString() === data.postId.toString()) {
-  //             return {
-  //               ...post,
-  //               likes: data.likes,
-  //             };
-  //           }
-  //           return post;
-  //         })
-  //       );
-  //     } catch (error) {
-  //       console.log("Error playing notification sound:", error);
-  //     }
-  //   };
+}
 
-  //   if (socket) {
-  //     console.log
-  //     socket.on("like-updated", handleLikeUpdate);
-  //   }
+  const handleDeletePost = useCallback(function (postId) {
+    try {
+      deletePostLogic(postId);
+    } catch (err) {
+      console.error("Error deleting post:", err);
+    }
+  }, []);
+  useEffect(() => {
+    const handleLikeUpdate = async (data) => {
+      try {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => {
+            console.log("socket");
+            if (post._id.toString() === data.postId.toString()) {
+              return {
+                ...post,
+                likes: data.likes,
+              };
+            }
+            return post;
+          })
+        );
+      } catch (error) {
+        console.log("Error playing notification sound:", error);
+      }
+    };
+    if (socket) {
+      console.log;
+      socket.on("like-updated", handleLikeUpdate);
+    }
 
-  //   return () => {
-  //     if (socket) {
-  //       socket.off("like-updated", handleLikeUpdate);
-  //     }
-  //   };
-  // }, [socket]);
+    return () => {
+      if (socket) {
+        socket.off("like-updated", handleLikeUpdate);
+      }
+    };
+  }, [socket]);
 
   useEffect(() => {
-    console.log("jjjkkkkkkk")
+    // console.log("jjjkkkkkkk");
     if (scrollRef.current && isLayoutDone && activeIndex !== null) {
       const targetY = postOffsets.current[activeIndex] || 0;
       // Delay scroll to allow for layout update
@@ -120,7 +115,7 @@ const PostViewerModal = ({
     }
   }, [activeIndex, isLayoutDone]);
 
-  // console.log("posts :", posts)
+  // console.log("posts 120:", posts);
 
   return (
     <Modal visible={true} transparent={true} animationType="fade">
@@ -129,20 +124,19 @@ const PostViewerModal = ({
         tint="light"
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <SafeAreaView>
+        <SafeAreaView style={{ width: "100%" }}>
           {/* Back Icon */}
           <View
-          // style={{
-          //   backgroundColor: "#ffffff",
-          //   width: width >= 1024 ? 500 : "100%",
-          //   height: 48,
-          //   padding: 8,
-          //   alignSelf: "center",
-          // }}
+            className="  bg-gray-300 z-50 flex justify-center"
+            style={{ width: "100%", height: "48" }}
           >
-            <TouchableOpacity onPress={onClose} style={{ marginLeft: -190 }}>
-              <Icon name="arrow-left" size={28} color="black" />
-            </TouchableOpacity>
+            <Pressable
+              onPress={onClose}
+              className="flex-row items-center h-12 px-4"
+            >
+              <Icon name="arrow-left" size={24} color="white" />
+              {/* <Text className="text-white font-semibold ml-2">Back</Text> */}
+            </Pressable>
           </View>
         </SafeAreaView>
 
@@ -218,7 +212,7 @@ const PostViewerModal = ({
                     {userProfile?.username}
                   </Text>
                   <Pressable
-                    onPress={() => setShowDelete(()=>post._id)}
+                    onPress={() => setShowDelete(() => post._id)}
                     style={{ position: "absolute", right: 8 }}
                   >
                     <Entypo
@@ -228,11 +222,11 @@ const PostViewerModal = ({
                     />
                   </Pressable>
 
-                  {showDelete===post._id && (
+                  {showDelete === post._id && (
                     <Pressable
-                    onPress={()=>{
-                      handleDeletePost(post._id)
-                    }}
+                      onPress={() => {
+                        handleDeletePost(post._id);
+                      }}
                       style={{
                         position: "absolute",
                         top: 60,
@@ -292,21 +286,20 @@ const PostViewerModal = ({
                         />
                       </TouchableOpacity>
                     ) : (
-                      // <Image
-                      //   source={{
-                      //     uri: `data:image/jpeg;base64,${post.media}`,
-                      //   }}
-                      //   style={{
-                      //     width: "100%",
-                      //     height: "100%",
-                      //     resizeMode: "contain",
-                      //   }}
-                      // />
-                      <View className="bg-red-600"></View>
+                      <Image
+                        source={{
+                          uri: `data:image/jpeg;base64,${post.media}`,
+                        }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          resizeMode: "contain",
+                        }}
+                      />
+                      // <View className="bg-red-600"></View>
                     )}
                   </View>
 
-                  {/* Bio Section */}
                   <View
                     style={{
                       width: "100%",

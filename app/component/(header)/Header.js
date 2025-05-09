@@ -58,8 +58,8 @@ export default function Header({
   };
 
   useEffect(() => {
-    if (searchBar?.length > 4) {
-      console.log("4");
+    if (searchBar?.length) {
+     
       fetchSearchResult();
     } else {
       setSearchResults([]);
