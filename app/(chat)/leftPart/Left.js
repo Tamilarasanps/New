@@ -12,13 +12,23 @@ const Left = ({ width, setUserClick, userClick }) => {
 
   return (
     <View
-      className={`h-screen ${width >= 1024 ? "w-[30%]" : userClick ?  "w-full hidden" : "w-full visible"} bg-blue-300`}
+      className={`h-screen  ${
+        width >= 1024
+          ? "w-[30%]"
+          : userClick
+          ? "w-full hidden"
+          : "w-full visible"
+      } bg-blue-300`}
     >
-      <View className='h-[15%] "w-full bg-pink-300 p-4 "'>
-        <Search searchKey={searchKey} setSearchKey={setSearchKey}/>
+      <View className='h-[15%] "w-full bg-TealGreen'>
+        <Search searchKey={searchKey} setSearchKey={setSearchKey} />
       </View>
-      <ScrollView className="h-[85%] bg-yellow-300">
-        <User allUser={allUser} setUserClick={setUserClick} searchKey={searchKey}/>
+      <ScrollView className="h-[85%] bg-gray-200">
+        <User
+          allUser={allUser}
+          setUserClick={setUserClick}
+          searchKey={searchKey}
+        />
       </ScrollView>
     </View>
   );

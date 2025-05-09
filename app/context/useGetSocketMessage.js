@@ -10,7 +10,6 @@ const useGetSocketMessage = () => {
 
   useEffect(() => {
     const handleNewMessage = async (newMessage) => {
-      console.log("newMessage : " + newMessage)
       try {
         // const { sound } = await Audio.Sound.createAsync(
         //   require("../assets/notification.mp3")

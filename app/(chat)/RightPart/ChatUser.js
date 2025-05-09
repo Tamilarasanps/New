@@ -6,17 +6,28 @@ import useConversation from "@/app/stateManagement/useConversation";
 import { Pressable } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useSocketContext } from "@/app/context/SocketContext";
+import { router } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const ChatUser = ({setUserClick, width}) => {
+const ChatUser = ({ setUserClick, width }) => {
   const [allUsers] = useGetAllUsers();
   const { selectedConversation } = useConversation();
   const receiver = allUsers.find((user) => user._id === selectedConversation);
-  const {onlineUsers} = useSocketContext()
-  
+  const { onlineUsers } = useSocketContext();
+
   return (
-    <View className="bg-gray-500 w-full h-[15%] flex flex-row p-4 gap-8 items-center">
-      <Pressable onPress={()=>setUserClick(false)}>
-      <Ionicons name="arrow-back"  size={24} color="white" className={`${width>=1024 ? "hidden" : "visible"}`}/>
+    <SafeAreaView
+      edges={["top"]}
+      className="bg-yellow-500 w-full h-[12%] flex flex-row p-2 gap-8 items-center"
+    >
+      <Pressable onPress={() => router.push(goBack)}>
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color="white"
+          className={`${width >= 1024 ? "hidden" : "visible"}`}
+        />
       </Pressable>
       <Avatar
         size={64}
@@ -25,9 +36,11 @@ const ChatUser = ({setUserClick, width}) => {
       />
       <View className="gap-1">
         <Text className="text-lg font-bold">{receiver?.username}</Text>
-        <Text className="">{onlineUsers.includes(selectedConversation) ? "online" : ""}</Text>
+        <Text className="">
+          {onlineUsers.includes(selectedConversation) ? "online" : ""}
+        </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

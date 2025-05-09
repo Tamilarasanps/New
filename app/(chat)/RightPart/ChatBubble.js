@@ -14,7 +14,7 @@ const ChatBubble = ({ message, sender, createdAt, time, seen }) => {
       {createdAt && <Text className="text-center text-gray-500 text-xs my-2">{createdAt}</Text>}
       <View
         className={`max-w-[80%] px-4 py-2 my-1 rounded-lg ${
-          isUser ? "bg-green-400 self-end" : "bg-gray-300 self-start"
+          isUser ? "bg-green-300 self-end" : "bg-gray-300 self-start"
         }`}
       >
         <Text className={`${isUser ? "text-black" : "text-gray-800"}`}>{message}</Text>

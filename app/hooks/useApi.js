@@ -1,15 +1,41 @@
 import axios from "axios";
+import { useToast } from "react-native-toast-notifications";
 
 const useApi = () => {
-  const API_URL = "http://192.168.1.6:5000";
+  const API_URL = "http://192.168.1.5:5000";
+  const toast = useToast();
 
   const handleRequest = async (request, path, token) => {
     try {
       const response = await request();
+      // console.log(response)
+      // 🟢 Show success toast if response has a message
+      const successMessage =
+        response?.data?.message || response?.data || "Request successful";
+      if (typeof successMessage === "string") {
+        toast.show(successMessage, {
+          type: "success",
+          placement: "top",
+          duration: 3000,
+        });
+      }
+
       return response;
     } catch (err) {
-      const errorMessage = err.response ? err.response.data : err.message;
-      console.log("Error:", errorMessage);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data ||
+        err.message ||
+        "An error occurred";
+
+      if (typeof errorMessage === "string") {
+        toast.show(errorMessage, {
+          type: "danger",
+          placement: "top",
+          duration: 3000,
+        });
+      }
+
       throw err;
     }
   };
@@ -40,11 +66,21 @@ const useApi = () => {
       path,
       token
     );
+  const DELETEAPI = async (path, data, token) =>
+    await handleRequest(
+      () =>
+        axios.delete(`${API_URL}/${path}`, data, {
+          headers: jsonHeader(token),
+        }),
+      path,
+      token
+    );
 
   return {
     getJsonApi: (path, token) => GETAPI(path, token),
     postJsonApi: (path, data, token) => POSTAPI(path, data, token),
     pathchApi: (path, data, token) => PATCHAPI(path, data, token),
+    deleteApi: (path, data, token) => DELETEAPI(path, data, token),
   };
 };
 

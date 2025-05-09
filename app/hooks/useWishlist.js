@@ -8,17 +8,16 @@ const useWishlist = () => {
 
   const addToWishlist = async (product) => {
     try {
-      console.log(product)
       const token = await AsyncStorage.getItem("userToken");
       const data = await pathchApi(
         `wishlist/add`,
         {
-          productId: product,
+          productId: product._id,
         },
         token
       );
-
-      setWishlist(data.data.favourites); // Update the wishlist with the new data
+      console.log("Wishlist updated:", data);
+      setWishlist(data.data); // Update the wishlist with the new data
     } catch (err) {
       console.log("Error adding to wishlist:", err);
     }

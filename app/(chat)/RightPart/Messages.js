@@ -1,19 +1,21 @@
 import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { View } from "react-native";
+import { View, KeyboardAvoidingView, Platform } from "react-native";
 import Message from "./Message";
 import TypeSend from "./TypeSend";
 
 const Messages = () => {
   return (
-    <View className="bg-yellow-500 h-[85%] w-full">
-      <ScrollView>
+    <KeyboardAvoidingView
+      className="h-[88%] w-full"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 30}
+    >
+      <ScrollView style={{ flex: 1 }}>
         <Message />
       </ScrollView>
-      <View>
-        <TypeSend/>
-      </View>
-    </View>
+      <TypeSend />
+    </KeyboardAvoidingView>
   );
 };
 
