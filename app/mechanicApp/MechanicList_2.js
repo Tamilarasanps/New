@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -137,10 +138,6 @@ const MechanicList_2 = () => {
     }
   }, [reviewModal, selectedMech]);
 
-  // filter function
-
-  // Contact: {mechanic.contact?.countryCode}{" "}
-  //                             {mechanic.contact?.number}
   function openDialer(mechanic) {
     const { countryCode, number } = mechanic.contact || {};
     if (countryCode && number) {
@@ -211,6 +208,23 @@ const MechanicList_2 = () => {
       });
     }
   };
+  // if (!expandedMechanicId) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         paddingVertical: 40,
+  //       }}
+  //     >
+  //       <ActivityIndicator size="large" color="#2563eb" />
+  //       <Text style={{ marginTop: 10, fontSize: 16, color: "#555" }}>
+  //         Loading posts...
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <>

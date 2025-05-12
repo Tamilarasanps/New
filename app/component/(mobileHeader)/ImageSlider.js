@@ -1,58 +1,156 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Animated, Image } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 
-export default ImageSlider = () => {
-  // Array of images
-  const images = [
-    require("../../assests/machine/fabric.png"),
-    require("../../assests/machine/circular.jpg"),
-    require("../../assests/machine/cone.jpg"),
-  ];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const position = useRef(new Animated.Value(400)).current;
+const screenWidth = Dimensions.get("window").width;
 
-  useEffect(() => {
-    const slideShow = () => {
-      Animated.timing(position, {
-        toValue: 0,
-        duration: 3000,
-        useNativeDriver: true,
-      }).start(() => {
-        setTimeout(() => {
-          Animated.timing(position, {
-            duration: 3000,
-            useNativeDriver: true,
-          }).start(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % images?.length);
-          });
-        }, 3000);
-      });
-    };
-    slideShow();
-    const interval = setInterval(slideShow, 5000);
-    return () => clearInterval(interval);
-  }, [position, images?.length, currentIndex]);
+const ImageSlider = ({
+  images,
+  onDelete,
+  onChange,
+  currentIndex,
+  setCurrentIndex,
+}) => {
+  // If no images are available
+  if (!images || images.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Please upload banners</Text>
+      </View>
+    );
+  }
+
+  // Navigation logic
+  const goLeft = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const goRight = () => {
+    if (currentIndex < images.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
 
   return (
-    <>
-      <View className="bg-red-600 h-[300px] relative flex items-center justify-center ">
-        <View className="bg-purple-500 w-full h-[50%]" />
-        <View
-          className="bg-gray-900 w-[90%] absolute  items-center "
-          style={{
-            aspectRatio: 16 / 9,
-            zIndex: 10,
+    <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: `data:image/jpeg;base64,${images[currentIndex]?.bannerImages}`,
           }}
-        >
-          <Animated.View className="w-full h-full flex justify-center items-center overflow-hidden">
-            <Image
-              source={images[currentIndex]}
-              className="w-full h-full rounded-md"
-            />
-          </Animated.View>
+          style={styles.image}
+          resizeMode="cover"
+        />
+
+        {/* Buttons inside image */}
+        <View style={styles.buttonContainer}>
+          {/* Optional Change button */}
+          {/* <TouchableOpacity
+            onPress={() => onChange(currentIndex)}
+            style={styles.actionButton}
+          >
+            <Text style={styles.buttonText}>Change</Text>
+          </TouchableOpacity> */}
+
+          <TouchableOpacity
+            onPress={() => onDelete(images[currentIndex]._id)}
+            style={[styles.actionButton, { backgroundColor: "#ff4d4d" }]}
+          >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
-        <View className="bg-yellow-500 w-full h-[50%] " />
       </View>
-    </>
+
+      {/* Arrow Controls */}
+      <View style={styles.navigation}>
+        <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>
+          <Text style={[styles.arrow, currentIndex === 0 && styles.disabled]}>
+            ◀
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={goRight}
+          disabled={currentIndex === images.length - 1}
+        >
+          <Text
+            style={[
+              styles.arrow,
+              currentIndex === images.length - 1 && styles.disabled,
+            ]}
+          >
+            ▶
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
+
+export default ImageSlider;
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  imageContainer: {
+    width: screenWidth * 0.9,
+    aspectRatio: 16 / 9,
+    position: "relative",
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: "#ccc",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    flexDirection: "row",
+    gap: 10,
+  },
+  actionButton: {
+    backgroundColor: "#007AFF",
+    padding: 8,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  navigation: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: screenWidth * 0.6,
+    marginTop: 10,
+  },
+  arrow: {
+    fontSize: 30,
+    color: "#000",
+  },
+  disabled: {
+    color: "#aaa",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: 30,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "gray",
+    fontStyle: "italic",
+  },
+});

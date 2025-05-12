@@ -7,8 +7,6 @@ const useGeoLocation = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [address, setAddress] = useState({});
 
-
-
   useEffect(() => {
     getLocation();
   }, []);
@@ -16,7 +14,7 @@ const useGeoLocation = () => {
   // Fetch address whenever location updates
   useEffect(() => {
     if (location) {
-      console.log(location)
+      console.log(location);
       fetchAddress(location.latitude, location.longitude);
     }
   }, [location]);
@@ -28,9 +26,9 @@ const useGeoLocation = () => {
           async (position) => {
             const { latitude, longitude } = position.coords;
             setLocation({
-              latitude : latitude,
-              longitude : longitude
-            })
+              latitude: latitude,
+              longitude: longitude,
+            });
 
             // Call fetchAddress with the obtained coordinates
             await fetchAddress(latitude, longitude);
@@ -49,6 +47,18 @@ const useGeoLocation = () => {
         setErrorMsg("Permission denied");
         return;
       }
+
+      const locationResult = await Location.getCurrentPositionAsync({});
+      setLocation({
+        latitude: locationResult.coords.latitude,
+        longitude: locationResult.coords.longitude,
+      });
+
+      // Optionally fetch address here as well
+      await fetchAddress(
+        locationResult.coords.latitude,
+        locationResult.coords.longitude
+      );
     }
   };
   const fetchAddress = async (latitude, longitude) => {
@@ -60,11 +70,14 @@ const useGeoLocation = () => {
 
       if (data.address) {
         setAddress({
-          district: data.address.city || data.address.town || data.address.village || "",
+          district:
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            "",
           state: data.address.state || "",
           country: data.address.country || "",
         });
-        
       }
     } catch (error) {
       console.error("Geocoding error:", error);

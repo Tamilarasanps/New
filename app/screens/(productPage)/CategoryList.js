@@ -27,9 +27,9 @@ export default function CategoryList() {
   const isScreen = width > 1024;
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  console.log(categories, "categories");
+  console.log("category :", categories);
   const [IndustriesData, setIndustriesData] = useState([]);
-  console.log(IndustriesData, "ksdkk");
+  console.log("industriesdata :", IndustriesData);
   const [totalCount, setTotalCount] = useState(null);
   const route = useRoute();
   const { getJsonApi } = useApi();
@@ -40,6 +40,7 @@ export default function CategoryList() {
 
   if (Platform.OS === "web") {
     industry = useLocalSearchParams().industry;
+    console.log("industry :", industry);
   } else {
     industry = route?.params?.industry;
   }
@@ -67,9 +68,16 @@ export default function CategoryList() {
     try {
       const queraystring = new URLSearchParams(geoCoords).toString();
       const data = await getJsonApi(`homepage/?${queraystring}`);
-      setIndustriesData(data.data.category);
 
-      console.log(data.data.category, "data categroypage");
+      setIndustriesData(data.data.category);                                                 
+
+      // const apiData = await getJsonApi(`CategoryPage`);
+      // console.log("apidat", apiData);
+      // console.log(apiData.data.industries.industries);
+      // setIndustriesData(apiData.data.industries.industries);
+      // setIndustriesData(data.data.industries.industries || []);
+
+      console.log(data, "data categroypage");
       console.log(queraystring);
     } catch (error) {
       console.error(error);
@@ -81,7 +89,7 @@ export default function CategoryList() {
   const filteredIndustries = IndustriesData.filter(
     (item) => item.industry.toLowerCase() === industry?.toLowerCase()
   );
-
+  console.log(filteredIndustries, "filterd");
   const handleProductPress = (category) => {
     if (Platform.OS === "web") {
       router.push(`/screens/(productPage)/ProductList?searchTerms=${category}`);

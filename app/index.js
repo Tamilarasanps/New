@@ -23,15 +23,18 @@ export default function index() {
     <>
       {/* {Platform.OS === "web" && <HomeScreen />}
        */}
-      <BottomNavBar />
+      <LandingPage />
+      {/* <BottomNavBar /> */}
       {/* <LikeButton /> */}
       {/* <SignUp /> */}
-      {/* <SellScreen />  */}
+      {/* <SellScreen /> */}
       {/* <RoleSelection /> */}
       {/* <Login />  */}
       {/* <MechanicList_2 /> */}
       {/* <ProfilePage /> */}
       {/* <SellPage /> */}
+      {/* <HomeScreen /> */}
+      {/* <All />  */}
     </>
   );
 }

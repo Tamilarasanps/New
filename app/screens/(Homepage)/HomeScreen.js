@@ -35,6 +35,7 @@ export default function HomeScreen() {
     } finally {
       stopLoading();
     }
+    
   };
 
   if (isLoading || pageDetails === null) {

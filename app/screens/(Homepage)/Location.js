@@ -18,13 +18,20 @@ const Location = ({ location, setLocation }) => {
   const [openDistrict, setOpenDistrict] = useState(false);
   const [openCountry, setOpenCountry] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("India");
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+
+  useEffect(() => {
+    if (location.district) {
+      setSelectedDistrict(location.district);
+    }
+  }, [location.district]);
 
   const inputFields = [
     { key: "country", label: "Country" },
     { key: "region", label: "Region" },
   ];
 
-  // Fetch regions and districts first, then set location
   const fetchIndustries = async () => {
     try {
       const data = await getJsonApi(`CategoryPage`);
@@ -34,14 +41,13 @@ const Location = ({ location, setLocation }) => {
       setRegions(fetchedRegions);
       setDistrictsWithStates(fetchedDistricts);
 
-      // Now that we have data, set location
       if (address?.state) {
         const matchedRegion = fetchedRegions.find(
           (r) => r.toLowerCase().trim() === address.state.toLowerCase().trim()
         );
 
         const matchedDistricts = fetchedDistricts
-          ?.filter(
+          .filter(
             (state) =>
               Object.keys(state)[0].toLowerCase().trim() ===
               address.state.toLowerCase().trim()
@@ -68,19 +74,19 @@ const Location = ({ location, setLocation }) => {
     }
   };
 
-  // Fetch initial data once
   useEffect(() => {
     if (address?.country && geoCoords) {
       fetchIndustries();
     }
   }, [address, geoCoords]);
 
-  // When region changes, update districts
+  console.log(location);
+
   useEffect(() => {
     if (location.region && districtsWithStates.length > 0) {
       const matchedDistricts =
         districtsWithStates
-          ?.filter(
+          .filter(
             (state) =>
               Object.keys(state)[0].toLowerCase().trim() ===
               location.region.toLowerCase().trim()
@@ -91,9 +97,15 @@ const Location = ({ location, setLocation }) => {
     }
   }, [location.region]);
 
+  useEffect(() => {
+    if (location.region) {
+      setSelectedRegion(location.region);
+    }
+  }, [location.region]);
+
   return (
     <View className="relative mt-10">
-      {/* Toggle checkbox */}
+      {/* Checkbox */}
       <View className="flex flex-row items-center justify-end">
         <View className="flex flex-row items-center">
           <Checkbox
@@ -107,7 +119,7 @@ const Location = ({ location, setLocation }) => {
                   district: "",
                 });
               } else {
-                fetchIndustries(); // reset to current location
+                fetchIndustries();
               }
               setIndia(!india);
             }}
@@ -120,28 +132,30 @@ const Location = ({ location, setLocation }) => {
 
       {!india ? (
         <>
-          {/* Region (State) Dropdown */}
+          {/* State Dropdown */}
           <View style={{ zIndex: openState ? 2000 : 1000, marginBottom: 20 }}>
             <Text className="text-lg font-semibold text-teal-600">State</Text>
             <DropDownPicker
               open={openState}
-              value={
-                regions?.length > 0 && regions.includes(location.region)
-                  ? location.region
-                  : null
-              }
+              value={selectedRegion}
               items={regions?.map((region) => ({
                 label: region,
                 value: region,
               }))}
               setOpen={setOpenState}
-              setValue={(value) =>
+              setValue={(callbackOrValue) => {
+                const newValue =
+                  typeof callbackOrValue === "function"
+                    ? callbackOrValue(selectedRegion)
+                    : callbackOrValue;
+
+                setSelectedRegion(newValue);
                 setLocation((prev) => ({
                   ...prev,
-                  region: value,
-                  district: "", // clear district when region changes
-                }))
-              }
+                  region: newValue,
+                  district: "",
+                }));
+              }}
               setItems={() => {}}
               placeholder="Select State"
               listMode="SCROLLVIEW"
@@ -169,22 +183,24 @@ const Location = ({ location, setLocation }) => {
             </Text>
             <DropDownPicker
               open={openDistrict}
-              value={
-                districts?.length > 0 && districts.includes(location.district)
-                  ? location.district
-                  : null
-              }
+              value={selectedDistrict}
               items={districts?.map((district) => ({
                 label: district,
                 value: district,
               }))}
               setOpen={setOpenDistrict}
-              setValue={(value) =>
+              setValue={(callbackOrValue) => {
+                const newValue =
+                  typeof callbackOrValue === "function"
+                    ? callbackOrValue(selectedDistrict)
+                    : callbackOrValue;
+
+                setSelectedDistrict(newValue);
                 setLocation((prev) => ({
                   ...prev,
-                  district: value,
-                }))
-              }
+                  district: newValue,
+                }));
+              }}
               setItems={() => {}}
               placeholder="Select District"
               disabled={!location.region}
@@ -206,16 +222,11 @@ const Location = ({ location, setLocation }) => {
             />
           </View>
 
-          {/* Country Dropdown */}
+          {/* Country (Fixed as India) */}
           <Text className="text-lg font-semibold text-teal-600 mt-6">
             Country:
           </Text>
-          <View
-            style={{
-              zIndex: openCountry ? 3000 : 1000,
-              marginBottom: 20,
-            }}
-          >
+          <View style={{ zIndex: openCountry ? 3000 : 1000, marginBottom: 20 }}>
             <DropDownPicker
               open={openCountry}
               value={selectedCountry}
@@ -224,9 +235,9 @@ const Location = ({ location, setLocation }) => {
               setValue={setSelectedCountry}
               setItems={() => {}}
               placeholder="Select Country"
+              disabled={true}
               listMode="SCROLLVIEW"
               autoScroll={true}
-              disabled={true}
               style={{
                 borderColor: "#D1D5DB",
                 height: 50,
@@ -244,7 +255,6 @@ const Location = ({ location, setLocation }) => {
           </View>
         </>
       ) : (
-        // Input fields for Other than India
         inputFields.map(({ key, label }) => (
           <View key={key} className="mt-4">
             <Text className="text-lg font-semibold text-teal-600">{label}</Text>

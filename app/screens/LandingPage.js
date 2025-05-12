@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   Platform,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation } from "expo-router";
 
@@ -29,109 +30,109 @@ const LandingPage = () => {
   const navigation = useNavigation();
 
   return (
-    <ScrollView style={{ backgroundColor: "#f8fafc" }}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.brand}>Machine Street</Text>
-        <View style={styles.navLinks}>
-          <Text style={styles.navLink} className="p-2">
-            Contact
-          </Text>
-          <Image
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg",
-            }}
-            style={{ width: 120, height: 40 }}
-            resizeMode="contain"
-          />
-          {/* <Text className='p-2' style={styles.border}>Get PlayStore</Text> */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }}>
+      <ScrollView style={{ backgroundColor: "#f8fafc" }}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.brand}>Machine Street</Text>
+          <View style={styles.navLinks}>
+            <Text style={styles.navLink} className="p-2">
+              Contact
+            </Text>
+            <Image
+              source={{
+                uri: "https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg",
+              }}
+              style={{ width: 120, height: 40 }}
+              resizeMode="contain"
+            />
+            {/* <Text className='p-2' style={styles.border}>Get PlayStore</Text> */}
+          </View>
         </View>
-      </View>
 
-      {/* Hero Section */}
-      <View style={styles.mainContainer}>
-        <View
-          style={{
-            flexDirection: isMobile ? "column" : "row",
-            alignItems: "center",
-            marginTop: 32,
-            paddingHorizontal: 16,
-            gap: 20,
-          }}
-        >
-          <View style={{ flex: 1, marginBottom: isMobile ? 24 : 0 }}>
-            <Text style={styles.heroTitle}>
-              Find Professional Mechanics Across All Industries
-            </Text>
-            <Text style={styles.heroSubtitle}>
-              Machine Street connects you with verified mechanics for
-              automotive, industrial, marine, agricultural, and more. Browse our
-              directory, view profiles, and contact the right expert for your
-              needs-quickly and easily.
-            </Text>
-            <View style={styles.heroButtons}>
-              <TouchableOpacity
-                style={styles.primaryBtn}
-                onPress={() => {
-                  // if (Platform.OS) {
-                  //   router.push("/mechanicApp/MechanicList_2");
-                  // } else {
+        {/* Hero Section */}
+        <View style={styles.mainContainer}>
+          <View
+            style={{
+              flexDirection: isMobile ? "column" : "row",
+              alignItems: "center",
+              marginTop: 32,
+              paddingHorizontal: 16,
+              gap: 20,
+            }}
+          >
+            <View style={{ flex: 1, marginBottom: isMobile ? 24 : 0 }}>
+              <Text style={styles.heroTitle}>
+                Find Professional Mechanics Across All Industries
+              </Text>
+              <Text style={styles.heroSubtitle}>
+                Machine Street connects you with verified mechanics for
+                automotive, industrial, marine, agricultural, and more. Browse
+                our directory, view profiles, and contact the right expert for
+                your needs-quickly and easily.
+              </Text>
+              <View style={styles.heroButtons}>
+                <TouchableOpacity
+                  style={styles.primaryBtn}
+                  onPress={() => {
+                    if (Platform.OS) {
+                      router.push("/mechanicApp/MechanicList_2");
+                    } else {
+                      navigation.navigate("MechanicProfiles");
+                    }
+                  }}
+                >
+                  <Text style={styles.primaryBtnText}>Get Started</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
-                  // }
-                  navigation.navigate("MechanicProfiles");
-                }}
-              >
-                <Text style={styles.primaryBtnText}>Get Started</Text>
-              </TouchableOpacity>
+            <Image
+              source={require("../assests/machine/mechimg.jpg")}
+              style={{
+                width: isMobile ? width * 0.9 : width * 0.42,
+                height: isMobile ? width * 0.5 : width * 0.28,
+                borderRadius: 18,
+                shadowColor: "#000",
+                shadowOpacity: 0.12,
+                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 6 },
+              }}
+              resizeMode="cover"
+            />
+          </View>
+
+          {/* Stats */}
+          <View style={styles.statsRow}>
+            <StatBox value="500+" label="Mechanics Listed" />
+            <StatBox value="20+" label="Industries Covered" />
+            <StatBox value="24/7" label="Support" />
+          </View>
+
+          {/* How It Works */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>How It Works</Text>
+            <View style={styles.stepsRow}>
+              <Step
+                icon="🔍"
+                title="Search"
+                description="Find mechanics by industry, location, or specialty."
+              />
+              <Step
+                icon="📄"
+                title="View Profiles"
+                description="Check detailed profiles, ratings, and skills."
+              />
+              <Step
+                icon="🤝"
+                title="Connect"
+                description="Contact mechanics directly and get your job started."
+              />
             </View>
           </View>
 
-          <Image
-            source={require("../assests/machine/mechimg.jpg")}
-            style={{
-              width: isMobile ? width * 0.9 : width * 0.42,
-              height: isMobile ? width * 0.5 : width * 0.28,
-              borderRadius: 18,
-              shadowColor: "#000",
-              shadowOpacity: 0.12,
-              shadowRadius: 12,
-              shadowOffset: { width: 0, height: 6 },
-            }}
-            resizeMode="cover"
-          />
-        </View>
-
-        {/* Stats */}
-        <View style={styles.statsRow}>
-          <StatBox value="500+" label="Mechanics Listed" />
-          <StatBox value="20+" label="Industries Covered" />
-          <StatBox value="24/7" label="Support" />
-        </View>
-
-        {/* How It Works */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>How It Works</Text>
-          <View style={styles.stepsRow}>
-            <Step
-              icon="🔍"
-              title="Search"
-              description="Find mechanics by industry, location, or specialty."
-            />
-            <Step
-              icon="📄"
-              title="View Profiles"
-              description="Check detailed profiles, ratings, and skills."
-            />
-            <Step
-              icon="🤝"
-              title="Connect"
-              description="Contact mechanics directly and get your job started."
-            />
-          </View>
-        </View>
-
-        {/* Why Machine Street */}
-        {/* <View style={styles.sectionAlt}>
+          {/* Why Machine Street */}
+          {/* <View style={styles.sectionAlt}>
           <Text style={styles.sectionTitle}>Why Machine Street?</Text>
           <View style={[styles.whyRow, isMobile && { flexDirection: 'column' }]}>
             <View style={styles.whyFeatures}>
@@ -169,8 +170,9 @@ const LandingPage = () => {
             />
           </View>
         </View> */}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

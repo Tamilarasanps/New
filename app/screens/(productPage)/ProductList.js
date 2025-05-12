@@ -184,6 +184,7 @@ export default function ProductList() {
   }
 
   const handleProductPress = (product) => {
+    console.log("productlistpage:", product);
     if (Platform.OS === "web") {
       // router.push(`/(screen)/SelectProduct?id=${product}`);
       router.push(`/screens/(productPage)/SelectProduct?id=${product}`);
