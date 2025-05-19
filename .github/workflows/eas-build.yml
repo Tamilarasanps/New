@@ -2,7 +2,8 @@ name: EAS Build (Mobile + Web)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
 
 jobs:
@@ -10,36 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # Set up Node 18 (with npm cache)
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: '18'
 
-      # Install dependencies
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      # Install EAS CLI globally
-      - run: npm install -g eas-cli
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
-      # Verify that EXPO_TOKEN is present
-      - name: Check EXPO_TOKEN
-        run: echo "EXPO_TOKEN length: ${#EXPO_TOKEN}"
+      - name: Debug EXPO_TOKEN presence
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: echo "EXPO_TOKEN length is ${#EXPO_TOKEN}"
 
-      # Build iOS & Android (preview profile)
-      - name: EAS Build (preview)
-        run: |
-          eas build --platform all \
-                    --profile preview \
-                    --non-interactive
+      - name: EAS Build (Mobile Preview)
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas build --platform all --profile preview --non-interactive
 
-      # Export static web build
-      - name: Export web
-        run: npx expo export:web --output-dir dist
+      - name: Build Web App
+        run: npm run export
