@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Install dependencies
         run: npm ci
@@ -27,12 +27,12 @@ jobs:
 
       - name: Debug EXPO_TOKEN presence
         env:
-          EXPO_TOKEN: ${{ secrets.machinestreet }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: echo "EXPO_TOKEN length is ${#EXPO_TOKEN}"
 
       - name: EAS Build (Mobile Preview)
         env:
-          EXPO_TOKEN: ${{ secrets.machinestreet }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform all --profile preview --non-interactive
 
       - name: Build Web App
