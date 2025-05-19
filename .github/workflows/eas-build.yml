@@ -25,12 +25,10 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Authenticate with Expo
-        run: eas login --token ${{ secrets.EXPO_TOKEN }}
-
       - name: EAS Build (Mobile Preview)
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build --platform all --profile preview --non-interactive
 
       - name: Build Web App
         run: npm run export
-
