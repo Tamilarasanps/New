@@ -1,4 +1,4 @@
-name: EAS Build (Mobile + Web)
+name: EAS Build (Mobile + Web)
 
 on:
   push:
@@ -6,48 +6,45 @@ on:
   pull_request:        # PRs from branches in the same repo
 
 permissions:
-  contents: read       # checkout
-  id-token: write      # needed for GitHub‑hosted macOS signing, optional
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣  Grab the code
+      # 1. Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣  Set up Node
-      - name: Use Node 18
+      # 2. Node 18 with npm cache
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
-      # 3️⃣  Install deps
+      # 3. Install project deps
       - run: npm ci
 
-      # 4️⃣  Install EAS CLI globally
+      # 4. Install EAS CLI globally
       - run: npm install -g eas-cli
 
-      # 5️⃣  Debug – prove the token is available
-      - name: Check EXPO_TOKEN length
-        run: echo "Token length: ${#EXPO_TOKEN}"
+      # 5. Debug token length
+      - name: Check EXPO_TOKEN
+        run: echo "EXPO_TOKEN length: ${#EXPO_TOKEN}"
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      # 6️⃣  Mobile build (preview profile)
-      - name: EAS Build Preview (iOS + Android)
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      # 6. Mobile preview build
+      - name: EAS Build (preview)
         run: |
-          eas build \
-            --platform all \
-            --profile preview \
-            --non-interactive
+          eas build --platform all \
+                    --profile preview \
+                    --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      # 7️⃣  Web export (static site into ./dist)
+      # 7. Export web build
       - name: Build web
-        run: |
-          npx expo export:web --output-dir dist
+        run: npx expo export:web --output-dir dist
