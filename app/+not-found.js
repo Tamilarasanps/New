@@ -1,12 +1,12 @@
-import React from 'react'
-import { View } from 'react-native'
+import React from "react";
+import { View, Text } from "react-native";
 
 const notfound = () => {
   return (
     <View>
-      notfound
+      <Text>Page notfound</Text>
     </View>
-  )
-}
+  );
+};
 
-export default notfound
+export default notfound;

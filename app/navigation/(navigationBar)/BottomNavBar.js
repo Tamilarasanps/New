@@ -15,6 +15,8 @@ import EditProfile from "@/app/mechanicApp/EditProfile";
 import MechanicStack from "../MechanicStack";
 import LandingPage from "@/app/screens/LandingPage";
 import MechanicProfileStack from "../MechanicProfileStack";
+import HomeScreen from "@/app/screens/(Homepage)/HomeScreen";
+import ProfileScreen from "@/app/screens/(profile)/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -101,18 +103,18 @@ function BottomNavBar() {
     // </Tab.Navigator>
 
     <Tab.Navigator
-      initialRouteName="HomePage"
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: "white",
-          borderRadius: 10,
-          height: 75,
-          display: isKeyboardVisible ? "none" : "flex", // ✅ DYNAMIC HIDE
-        },
-        tabBarActiveTintColor: "teal",
-        tabBarInactiveTintColor: "grey",
-      }}
+    // initialRouteName="HomePage"
+    // screenOptions={{
+    //   headerShown: false,
+    //   tabBarStyle: {
+    //     backgroundColor: "white",
+    //     borderRadius: 10,
+    //     height: 75,
+    //     display: isKeyboardVisible ? "none" : "flex", // ✅ DYNAMIC HIDE
+    //   },
+    //   tabBarActiveTintColor: "teal",
+    //   tabBarInactiveTintColor: "grey",
+    // }}
     >
       <Tab.Screen
         name="HomePage"
@@ -125,7 +127,7 @@ function BottomNavBar() {
       />
       <Tab.Screen
         name="MechanicProfiles"
-        component={MechanicStack}
+        component={MechanicProfileStack}
         options={{
           tabBarIcon: ({ color }) => (
             // <MaterialCommunityIcons
@@ -142,7 +144,7 @@ function BottomNavBar() {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileScreen"
         component={MechanicProfileStack}
         options={{
           tabBarIcon: ({ color }) => (

@@ -30,7 +30,8 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { BlurView } from "expo-blur";
 
 const MechanicList_2 = () => {
-  const { width } = useWindowDimensions();
+  const width = useWindowDimensions();
+  
 
   const {
     mechanics,

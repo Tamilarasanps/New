@@ -8,6 +8,7 @@ import {
   Pressable,
   SafeAreaView,
   Linking,
+  Alert,
 } from "react-native";
 import React, { useEffect, useCallback, useMemo } from "react";
 import { Share as NativeShare } from "react-native";
@@ -26,6 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import VideoComponent from "../(sellerForm)/Video";
 import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 
 export default function SelectProduct() {
   const { width } = useWindowDimensions();
@@ -104,13 +106,13 @@ export default function SelectProduct() {
   } else {
     id = route?.params?.id;
   }
-
-  const share = useCallback(async () => {
+console.log('share')
+  const share = useCallback(async (product) => {
     if (!product) {
       console.log("Product Not Found");
       return;
-    }  
-
+    }
+console.log('share1')
     const productUrl = `http://localhost:8081/product/${
       product.MachineName || product._id
     }`;
@@ -120,6 +122,7 @@ export default function SelectProduct() {
 
     try {
       if (Platform.OS === "web") {
+        // Web platform
         if (navigator.share) {
           await navigator.share({
             title: "Check out this product!",
@@ -128,11 +131,12 @@ export default function SelectProduct() {
           });
           console.log("✅ Shared via Web Share API");
         } else {
-          // Fallback: copy to clipboard
-          await navigator.clipboard.writeText(message);
+          // Clipboard fallback
+          await Clipboard.setStringAsync(message);
           alert("🔗 URL copied to clipboard (Web Share not supported)");
         }
       } else {
+        // Native platforms
         const result = await NativeShare.share({ message });
         if (result.action === NativeShare.sharedAction) {
           console.log("✅ Shared on mobile");
@@ -142,8 +146,9 @@ export default function SelectProduct() {
       }
     } catch (error) {
       console.log("❌ Error while sharing:", error);
+      Alert.alert("Error", "There was a problem sharing this product.");
     }
-  }, [product]);
+  }, []);
 
   const openDailer = () => {
     Linking.openURL(`tel:${product.contact}`);

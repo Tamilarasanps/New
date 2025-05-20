@@ -17,13 +17,14 @@ import Login from "./screens/(auth)/(login)/Login";
 import SellScreen from "./screens/(sellerForm)/SellScreen";
 import SellPage from "./screens/(sellerForm)/Page";
 import LikeButton from "./mechanicApp/Like";
+import QrGenerater from "./mechanicApp/QrGenerater";
 
 export default function index() {
   return (
     <>
       {/* {Platform.OS === "web" && <HomeScreen />}
        */}
-      <LandingPage />
+      <LandingPage /> 
       {/* <BottomNavBar /> */}
       {/* <LikeButton /> */}
       {/* <SignUp /> */}
@@ -35,6 +36,8 @@ export default function index() {
       {/* <SellPage /> */}
       {/* <HomeScreen /> */}
       {/* <All />  */}
+      {/* <QrGenerater /> */}
+      
     </>
   );
 }

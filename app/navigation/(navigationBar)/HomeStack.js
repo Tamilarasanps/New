@@ -24,6 +24,11 @@ export default function HomeStack() {
   return (
     <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen
+        name="LandingPage" // 👈 new screen
+        component={LandingPage}
+        options={{ title: "LandingPage ", headerShown: false }}
+      />
+      <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{ title: "Home", headerShown: false }}
@@ -79,7 +84,7 @@ export default function HomeStack() {
         component={SignUp}
         options={{ title: "SignUp ", headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="LandingPage" // 👈 new screen
         component={LandingPage}
         options={{ title: "LandingPage ", headerShown: false }}
@@ -93,7 +98,7 @@ export default function HomeStack() {
         name="ProfilePage" // 👈 new screen
         component={ProfilePage}
         options={{ title: "ProfilePage ", headerShown: false }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }

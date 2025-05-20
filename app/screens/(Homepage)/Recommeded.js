@@ -15,14 +15,14 @@ export default function Recommeded({ recommendedProducts }) {
   const router = useRouter();
 
   const handleProductPress = (product) => {
-    if (Platform.OS === "web") {
+    // if (Platform.OS === "web") {
       router.push({
         pathname: "/screens/(productPage)/SelectProduct",
         params: { id: product },
       });
-    } else {
-      navigation.navigate("SelectProduct", { id: product });
-    }
+    // } else {
+    //   navigation.navigate("SelectProduct", { id: product });
+    // }
   };
 
   return (
